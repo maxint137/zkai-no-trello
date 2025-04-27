@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-dotenv.config();
+dotenv.config(); //https://trello.com/power-ups/ https://trello.com/1/authorize?expiration=never&
 
 type StandardStepsType = { name: string; items: string[] }[];
 
@@ -30,6 +30,10 @@ type Card = {
   prototype: Assignment;
 };
 
+type PersonalBoards = {
+  [key: string]: Board;
+};
+
 const startDate = new Date(2025, 4, 1); // May 1st, 2025 (Month is 0-indexed)
 
 const ClassSteps: StandardStepsType = [
@@ -54,7 +58,7 @@ const DrillSteps: StandardStepsType = [
 ];
 
 // prettier-ignore
-const data_test: { [key: string]: Board } = {
+const data_test: PersonalBoards = {
     Adam: {
         boardName: `Test`,
         boardId: '67f1dc13ad790ade3570599c',
@@ -66,42 +70,42 @@ const data_test: { [key: string]: Board } = {
 
         userName: 'adamlevy74',
         assignmentsDefinition: [
-            { subject: 'math', count: 2, rounds: 1, labels: ['Math'], steps: ClassSteps },
-            { subject: 'japanese', count: 2, rounds: 1, labels: ['Jap'], steps: ClassSteps },
-            { subject: 'social', count: 3, rounds: 1, labels: ['Soc'], steps: ClassSteps },
-            { subject: 'science', count: 3, rounds: 1, labels: ['Soc'], steps: ClassSteps },
-	],
+            // { subject: 'Math 🧮', count: 2, rounds: 1, labels: ['Math', 'Class'], steps: ClassSteps },
+            // { subject: 'Japanese 🇯🇵', count: 2, rounds: 1, labels: ['Jap', 'Class'], steps: ClassSteps },
+            // { subject: 'Soc. St 🌐', count: 3, rounds: 1, labels: ['Soc', 'Class'], steps: ClassSteps },
+            // { subject: 'Science 🔬', count: 3, rounds: 1, labels: ['Sci', 'Class'], steps: ClassSteps },
+        ],
 
         drillsDefinition: [
-            { subject: '🏋️🧠', count: 1, rounds: 1, labels: ['Math'], steps: DrillSteps },
-            { subject: '🏋️🇯🇵', count: 10, rounds: 1, labels: ['Jap'], steps: DrillSteps },
-            { subject: 'English 🏴󠁧󠁢󠁥󠁮󠁧󠁿', count: 8, rounds: 1, labels: ['Eng', 'Drill'], steps: DrillSteps },
-            { subject: 'Papa 🪆', count: 8, rounds: 1, labels: ['Papa', 'Drill'], steps: DrillSteps },
-	],
+            // { subject: '🏋️ Math', count: 1, rounds: 1, labels: ['Math', 'Drill'], steps: DrillSteps },
+            // { subject: '🏋️ Jap.', count: 10, rounds: 1, labels: ['Jap', 'Drill'], steps: DrillSteps },
+            { subject: 'English 🏴󠁧󠁢󠁥󠁮󠁧󠁿', count: 2, rounds: 1, labels: ['🏴󠁧󠁢󠁥󠁮󠁧󠁿'], steps: [] },
+            { subject: 'Papa 🪆', count: 2, rounds: 1, labels: ['🍿'], steps: [] },
+        ],
     }
 };
 
 // prettier-ignore
-const data: { [key: string]: Board } = {
-    Adam: {
-        boardName: `Adam's ZK`,
-        userName: 'adamlevy74',
+const data_real: PersonalBoards = {
+    // Adam: {
+    //     boardName: `Adam's ZK`,
+    //     userName: 'adamlevy74',
 
 
-        assignmentsDefinition: [
-            { subject: 'Math 🧮', count: 6+1, rounds: 1, labels: ['Math', 'Class'], steps: ClassSteps },
-            { subject: 'Japanese 🇯🇵', count: 6+1, rounds: 1, labels: ['Jap', 'Class'], steps: ClassSteps },
-            { subject: 'Soc. St 🌐', count: 2+1, rounds: 1, labels: ['Soc', 'Class'], steps: ClassSteps },
-            { subject: 'Science 🔬', count: 2+1, rounds: 1, labels: ['Sci', 'Class'], steps: ClassSteps },
-        ],
-        
-        drillsDefinition: [
-            { subject: '🏋️ Math', count: 10, rounds: 1, labels: ['Math', 'Drill'], steps: DrillSteps },
-            { subject: '🏋️ Jap.', count: 10, rounds: 1, labels: ['Jap', 'Drill'], steps: DrillSteps },
-            { subject: 'English 🏴󠁧󠁢󠁥󠁮󠁧󠁿', count: 8, rounds: 1, labels: ['Eng', 'Drill'], steps: DrillSteps },
-            { subject: 'Papa 🪆', count: 8, rounds: 1, labels: ['Papa', 'Drill'], steps: DrillSteps },
-        ],
-    },
+    //     assignmentsDefinition: [
+    //         { subject: 'Math 🧮', count: 6+1, rounds: 1, labels: ['Math', 'Class'], steps: ClassSteps },
+    //         { subject: 'Japanese 🇯🇵', count: 6+1, rounds: 1, labels: ['Jap', 'Class'], steps: ClassSteps },
+    //         { subject: 'Soc. St 🌐', count: 2+1, rounds: 1, labels: ['Soc', 'Class'], steps: ClassSteps },
+    //         { subject: 'Science 🔬', count: 2+1, rounds: 1, labels: ['Sci', 'Class'], steps: ClassSteps },
+    //     ],
+
+    //     drillsDefinition: [
+    //         { subject: '🏋️ Math', count: 10, rounds: 1, labels: ['Math', 'Drill'], steps: DrillSteps },
+    //         { subject: '🏋️ Jap.', count: 10, rounds: 1, labels: ['Jap', 'Drill'], steps: DrillSteps },
+    //         { subject: 'English 🏴󠁧󠁢󠁥󠁮󠁧󠁿', count: 30/3, rounds: 1, labels: ['🏴󠁧󠁢󠁥󠁮󠁧󠁿'], steps: DrillSteps },
+    //         { subject: 'Papa 🪆', count: 30/2, rounds: 1, labels: ['🍿'], steps: DrillSteps },
+    //     ],
+    // },
     Ilya: {
         boardName: `Ilya's ZK`,
         userName: 'ilyalevy',
@@ -116,11 +120,13 @@ const data: { [key: string]: Board } = {
         drillsDefinition: [
             { subject: '🏋️ Math', count: 10, rounds: 1, labels: ['Math', 'Drill'], steps: DrillSteps },
             { subject: '🏋️ Jap.', count: 10, rounds: 1, labels: ['Jap', 'Drill'], steps: DrillSteps },
+            { subject: 'English 🏴󠁧󠁢󠁥󠁮󠁧󠁿', count: 30 / 3, rounds: 1, labels: ['🏴󠁧󠁢󠁥󠁮󠁧󠁿'], steps: [] },
+            { subject: 'Papa 🪆', count: 30 / 2, rounds: 1, labels: ['🍿'], steps: [] },
         ],
     },
 }
 
-async function setupStaticData(boards: { [key: string]: Board }) {
+async function setupStaticData(boards: PersonalBoards) {
   await Promise.all(
     Object.keys(boards).map(async (name) => {
       const board = boards[name];
@@ -401,6 +407,10 @@ async function trelloAddLabels(
   }
 }
 
+const data = data_test;
+//const data = data_real;
+
+// main
 setupStaticData(data).then(() => {
   console.log("Setting up static data...", data);
 
