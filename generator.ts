@@ -7,8 +7,8 @@ type Assignment = {
   subject: string;
   count: number;
   rounds: number;
-  labels?: string[];
-  steps?: StandardStepsType;
+  labels: string[];
+  steps: StandardStepsType;
 };
 
 type Board = {
@@ -19,8 +19,8 @@ type Board = {
 
   boardId?: string;
   userId?: string;
-  todoListId?: string;
-  labelIds?: { [key: string]: string };
+  todoListId: string;
+  labelIds: { [key: string]: string };
 };
 
 type Card = {
@@ -82,6 +82,8 @@ const data_test: PersonalBoards = {
             { subject: 'English 🏴󠁧󠁢󠁥󠁮󠁧󠁿', count: 2, rounds: 1, labels: ['🏴󠁧󠁢󠁥󠁮󠁧󠁿'], steps: [] },
             { subject: 'Papa 🪆', count: 2, rounds: 1, labels: ['🍿'], steps: [] },
         ],
+        todoListId:"",
+        labelIds:{},
     }
 };
 
@@ -123,6 +125,8 @@ const data_real: PersonalBoards = {
             { subject: 'English 🏴󠁧󠁢󠁥󠁮󠁧󠁿', count: 30 / 3, rounds: 1, labels: ['🏴󠁧󠁢󠁥󠁮󠁧󠁿'], steps: [] },
             { subject: 'Papa 🪆', count: 30 / 2, rounds: 1, labels: ['🍿'], steps: [] },
         ],
+        todoListId:"",
+        labelIds:{},
     },
 }
 
@@ -394,7 +398,7 @@ async function trelloAddChecklist(
 }
 async function trelloAddLabels(
   cardId: string,
-  labelIds: string[]
+  labelIds: string[] | undefined
 ): Promise<void> {
   if (!labelIds) {
     return;
@@ -431,7 +435,7 @@ setupStaticData(data).then(() => {
       ...calculateTaskDates(startDate, drillsDefinition),
     ].map((card, index) =>
       delay(index * 1000)
-        .then(() => trelloCardCreate(todoListId, card)) // create the card
+        .then(() => trelloCardCreate(todoListId!, card)) // create the card
         .then(
           (newCard) =>
             trelloApi(`cards/${newCard.id}/idMembers`, { value: userId }) // add the user
