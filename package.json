@@ -1,4 +1,12 @@
 {
+  "name": "trello-zk",
+  "version": "1.0.0",
+  "description": "Generate work-plan for the kids",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx tsx generator.ts"
+  },
+  "author": "Max Levy",
   "dependencies": {
     "dotenv": "^16.5.0"
   },

@@ -34,7 +34,7 @@ type PersonalBoards = {
   [key: string]: Board;
 };
 
-const startDate = new Date(2025, 4, 1); // May 1st, 2025 (Month is 0-indexed)
+const startDate = new Date(2025, 5, 1); // June 1st, 2025 (Month is 0-indexed)
 
 const ClassSteps: StandardStepsType = [
   {
@@ -89,25 +89,26 @@ const data_test: PersonalBoards = {
 
 // prettier-ignore
 const data_real: PersonalBoards = {
-    // Adam: {
-    //     boardName: `Adam's ZK`,
-    //     userName: 'adamlevy74',
+    Adam: {
+        boardName: `Adam's ZK`,
+        userName: 'adamlevy74',
 
+        assignmentsDefinition: [
+            { subject: 'Math 🧮', count: 6+1, rounds: 1, labels: ['Math', 'Class'], steps: ClassSteps },
+            { subject: 'Japanese 🇯🇵', count: 6+1, rounds: 1, labels: ['Jap', 'Class'], steps: ClassSteps },
+            { subject: 'Soc. St 🌐', count: 2+1, rounds: 1, labels: ['Soc', 'Class'], steps: ClassSteps },
+            { subject: 'Science 🔬', count: 2+1, rounds: 1, labels: ['Sci', 'Class'], steps: ClassSteps },
+        ],
 
-    //     assignmentsDefinition: [
-    //         { subject: 'Math 🧮', count: 6+1, rounds: 1, labels: ['Math', 'Class'], steps: ClassSteps },
-    //         { subject: 'Japanese 🇯🇵', count: 6+1, rounds: 1, labels: ['Jap', 'Class'], steps: ClassSteps },
-    //         { subject: 'Soc. St 🌐', count: 2+1, rounds: 1, labels: ['Soc', 'Class'], steps: ClassSteps },
-    //         { subject: 'Science 🔬', count: 2+1, rounds: 1, labels: ['Sci', 'Class'], steps: ClassSteps },
-    //     ],
-
-    //     drillsDefinition: [
-    //         { subject: '🏋️ Math', count: 10, rounds: 1, labels: ['Math', 'Drill'], steps: DrillSteps },
-    //         { subject: '🏋️ Jap.', count: 10, rounds: 1, labels: ['Jap', 'Drill'], steps: DrillSteps },
-    //         { subject: 'English 🏴󠁧󠁢󠁥󠁮󠁧󠁿', count: 30/3, rounds: 1, labels: ['🏴󠁧󠁢󠁥󠁮󠁧󠁿'], steps: DrillSteps },
-    //         { subject: 'Papa 🪆', count: 30/2, rounds: 1, labels: ['🍿'], steps: DrillSteps },
-    //     ],
-    // },
+        drillsDefinition: [
+            { subject: '🏋️ Math', count: 10, rounds: 1, labels: ['Math', 'Drill'], steps: DrillSteps },
+            { subject: '🏋️ Jap.', count: 10, rounds: 1, labels: ['Jap', 'Drill'], steps: DrillSteps },
+            { subject: 'English 🏴󠁧󠁢󠁥󠁮󠁧󠁿', count: 30/3, rounds: 1, labels: ['🏴󠁧󠁢󠁥󠁮󠁧󠁿'], steps: DrillSteps },
+            { subject: 'Papa 🪆', count: 30/2, rounds: 1, labels: ['🍿'], steps: DrillSteps },
+        ],
+        todoListId:"",
+        labelIds:{},
+    },
     Ilya: {
         boardName: `Ilya's ZK`,
         userName: 'ilyalevy',
@@ -411,8 +412,8 @@ async function trelloAddLabels(
   }
 }
 
-const data = data_test;
-//const data = data_real;
+// const data = data_test;
+const data = data_real;
 
 // main
 setupStaticData(data).then(() => {
