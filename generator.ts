@@ -1,3 +1,4 @@
+import { assert } from "console";
 import * as dotenv from "dotenv";
 dotenv.config(); //https://trello.com/power-ups/ https://trello.com/1/authorize?expiration=never&
 
@@ -34,7 +35,7 @@ type PersonalBoards = {
   [key: string]: Board;
 };
 
-const startDate = new Date(2025, 6, 1); // July 1st, 2025 (Month is 0-indexed)
+const startDate = new Date(2025, 9 - 1, 1); // September 1st, 2025 (Month is 0-indexed)
 
 const ClassSteps: StandardStepsType = [
   {
@@ -59,76 +60,81 @@ const DrillSteps: StandardStepsType = [
 
 // prettier-ignore
 const data_test: PersonalBoards = {
-    Adam: {
-        boardName: `Test`,
-        boardId: '67f1dc13ad790ade3570599c',
-        // "name": "To Do",
-        // "id": "67f1dc19f06cda1beff13b8a",
-        // card: 67f1de69250d19943d4f2eff
-        // checklist: 67f1de74c64e24c41f891a33
-        // https://api.trello.com/1/checklists/{id}/checkItems?name={name}&key=APIKey&token=APIToken'
+  Adam: {
+    boardName: `Test`,
+    boardId: '67f1dc13ad790ade3570599c',
+    // "name": "To Do",
+    // "id": "67f1dc19f06cda1beff13b8a",
+    // card: 67f1de69250d19943d4f2eff
+    // checklist: 67f1de74c64e24c41f891a33
+    // https://api.trello.com/1/checklists/{id}/checkItems?name={name}&key=APIKey&token=APIToken'
 
-        userName: 'adamlevy74',
-        assignmentsDefinition: [
-            // { subject: 'Math 🧮', count: 2, rounds: 1, labels: ['Math', 'Class'], steps: ClassSteps },
-            // { subject: 'Japanese 🇯🇵', count: 2, rounds: 1, labels: ['Jap', 'Class'], steps: ClassSteps },
-            // { subject: 'Soc. St 🌐', count: 3, rounds: 1, labels: ['Soc', 'Class'], steps: ClassSteps },
-            // { subject: 'Science 🔬', count: 3, rounds: 1, labels: ['Sci', 'Class'], steps: ClassSteps },
-        ],
+    userName: 'adamlevy74',
+    assignmentsDefinition: [
+      // { subject: 'Math 🧮', count: 2, rounds: 1, labels: ['Math', 'Class'], steps: ClassSteps },
+      // { subject: 'Japanese 🇯🇵', count: 2, rounds: 1, labels: ['Jap', 'Class'], steps: ClassSteps },
+      // { subject: 'Soc. St 🌐', count: 3, rounds: 1, labels: ['Soc', 'Class'], steps: ClassSteps },
+      // { subject: 'Science 🔬', count: 3, rounds: 1, labels: ['Sci', 'Class'], steps: ClassSteps },
+    ],
 
-        drillsDefinition: [
-            // { subject: '🏋️ Math', count: 1, rounds: 1, labels: ['Math', 'Drill'], steps: DrillSteps },
-            // { subject: '🏋️ Jap.', count: 10, rounds: 1, labels: ['Jap', 'Drill'], steps: DrillSteps },
-            { subject: 'English 🏴󠁧󠁢󠁥󠁮󠁧󠁿', count: 2, rounds: 1, labels: ['🏴󠁧󠁢󠁥󠁮󠁧󠁿'], steps: [] },
-            { subject: 'Papa 🪆', count: 2, rounds: 1, labels: ['🍿'], steps: [] },
-        ],
-        todoListId:"",
-        labelIds:{},
-    }
+    drillsDefinition: [
+      // { subject: '🏋️ Math', count: 1, rounds: 1, labels: ['Math', 'Drill'], steps: DrillSteps },
+      // { subject: '🏋️ Jap.', count: 10, rounds: 1, labels: ['Jap', 'Drill'], steps: DrillSteps },
+      { subject: 'English 🏴󠁧󠁢󠁥󠁮󠁧󠁿', count: 2, rounds: 1, labels: ['🏴󠁧󠁢󠁥󠁮󠁧󠁿'], steps: [] },
+      { subject: 'Papa 🪆', count: 2, rounds: 1, labels: ['🍿'], steps: [] },
+    ],
+    todoListId: "",
+    labelIds: {},
+  }
 };
 
 // prettier-ignore
 const data_real: PersonalBoards = {
-    Adam: {
-        boardName: `Adam's ZK`,
-        userName: 'adamlevy74',
+  // Adam: {
+  //     boardName: `Adam's ZK`,
+  //     userName: 'adamlevy74',
 
-        assignmentsDefinition: [
-            { subject: 'Math 🧮', count: 6+1, rounds: 1, labels: ['Math', 'Class'], steps: ClassSteps },
-            { subject: 'Japanese 🇯🇵', count: 6+1, rounds: 1, labels: ['Jap', 'Class'], steps: ClassSteps },
-            { subject: 'Soc. St 🌐', count: 2+1, rounds: 1, labels: ['Soc', 'Class'], steps: ClassSteps },
-            { subject: 'Science 🔬', count: 2+1, rounds: 1, labels: ['Sci', 'Class'], steps: ClassSteps },
-        ],
+  //     assignmentsDefinition: [
+  //         { subject: 'Math 🧮', count: 6+1, rounds: 1, labels: ['Math', 'Class'], steps: ClassSteps },
+  //         { subject: 'Japanese 🇯🇵', count: 6+1, rounds: 1, labels: ['Jap', 'Class'], steps: ClassSteps },
+  //         { subject: 'Soc. St 🌐', count: 2+1, rounds: 1, labels: ['Soc', 'Class'], steps: ClassSteps },
+  //         { subject: 'Science 🔬', count: 2+1, rounds: 1, labels: ['Sci', 'Class'], steps: ClassSteps },
+  //     ],
 
-        drillsDefinition: [
-            { subject: '🏋️ Math', count: 10, rounds: 1, labels: ['Math', 'Drill'], steps: DrillSteps },
-            { subject: '🏋️ Jap.', count: 10, rounds: 1, labels: ['Jap', 'Drill'], steps: DrillSteps },
-            { subject: 'English 🏴󠁧󠁢󠁥󠁮󠁧󠁿', count: 30/3, rounds: 1, labels: ['🏴󠁧󠁢󠁥󠁮󠁧󠁿'], steps: DrillSteps },
-            { subject: 'Papa 🪆', count: 30/2, rounds: 1, labels: ['🍿'], steps: DrillSteps },
-        ],
-        todoListId:"",
-        labelIds:{},
-    },
-    Ilya: {
-        boardName: `Ilya's ZK`,
-        userName: 'ilyalevy',
+  //     drillsDefinition: [
+  //         { subject: '🏋️ Math', count: 10, rounds: 1, labels: ['Math', 'Drill'], steps: DrillSteps },
+  //         { subject: '🏋️ Jap.', count: 10, rounds: 1, labels: ['Jap', 'Drill'], steps: DrillSteps },
+  //         { subject: 'English 🏴󠁧󠁢󠁥󠁮󠁧󠁿', count: 30/3, rounds: 1, labels: ['🏴󠁧󠁢󠁥󠁮󠁧󠁿'], steps: DrillSteps },
+  //         { subject: 'Papa 🪆', count: 30/2, rounds: 1, labels: ['🍿'], steps: DrillSteps },
+  //     ],
+  //     todoListId:"",
+  //     labelIds:{},
+  // },
+  Ilya: {
+    boardName: `Ilya's ZK`,
+    userName: 'ilyalevy',
 
-        assignmentsDefinition: [
-            { subject: 'Math 🧮', count: 6, rounds: 2, labels: ['Math', 'Class'], steps: ClassSteps },
-            { subject: 'Japanese 🇯🇵', count: 6, rounds: 2, labels: ['Jap', 'Class'], steps: ClassSteps },
-            { subject: 'Soc. St 🌐', count: 4, rounds: 2, labels: ['Soc', 'Class'], steps: ClassSteps },
-            { subject: 'Science 🔬', count: 4, rounds: 2, labels: ['Sci', 'Class'], steps: ClassSteps }
-        ],
+    assignmentsDefinition: [
+      // { subject: 'Japanese 🇯🇵', count: 6, rounds: 2, labels: ['Jap', 'Class'], steps: ClassSteps },
+      // { subject: 'Soc. St 🌐', count: 4, rounds: 2, labels: ['Soc', 'Class'], steps: ClassSteps },
+      // { subject: 'Science 🔬', count: 4, rounds: 2, labels: ['Sci', 'Class'], steps: ClassSteps }
+      // { subject: '🐧 Class', count: 5, rounds: 1, labels: ['Math', 'Class'], steps: ClassSteps },
+      // { subject: '🐊 Class', count: 5, rounds: 1, labels: ['Sci', 'Class'], steps: ClassSteps },
+      // { subject: '🦅 Class', count: 5, rounds: 1, labels: ['Soc', 'Class'], steps: ClassSteps },
+    ],
 
-        drillsDefinition: [
-            { subject: '🏋️ Math', count: 10, rounds: 1, labels: ['Math', 'Drill'], steps: DrillSteps },
-            { subject: '🏋️ Jap.', count: 10, rounds: 1, labels: ['Jap', 'Drill'], steps: DrillSteps },
-            { subject: 'English 🏴󠁧󠁢󠁥󠁮󠁧󠁿', count: 30 / 3, rounds: 1, labels: ['🏴󠁧󠁢󠁥󠁮󠁧󠁿'], steps: [] },
-            { subject: 'Papa 🪆', count: 30 / 2, rounds: 1, labels: ['🍿'], steps: [] },
-        ],
-        todoListId:"",
-        labelIds:{},
-    },
+    drillsDefinition: [
+      // { subject: '🏋️ Jap.', count: 10, rounds: 1, labels: ['Jap', 'Drill'], steps: DrillSteps },
+      // { subject: 'English 🏴󠁧󠁢󠁥󠁮󠁧󠁿', count: 30 / 3, rounds: 1, labels: ['🏴󠁧󠁢󠁥󠁮󠁧󠁿'], steps: [] },
+      // { subject: 'Papa 🪆', count: 30 / 2, rounds: 1, labels: ['🍿'], steps: [] },
+      // { subject: '🐧 Ex', count: 5, rounds: 1, labels: ['Math', 'Ex'], steps: DrillSteps },
+      { subject: '🐧 Drill', count: 7, rounds: 5, labels: ['Math', 'Drill'], steps: DrillSteps },
+      // { subject: '🐊 Ex', count: 5, rounds: 1, labels: ['Sci', 'Ex'], steps: DrillSteps },
+      // { subject: '🦅 Ex', count: 5, rounds: 1, labels: ['Soc', 'Ex'], steps: DrillSteps },
+    ],
+    todoListId: "",
+    labelIds: {},
+  },
 }
 
 async function setupStaticData(boards: PersonalBoards) {
@@ -179,7 +185,11 @@ async function setupStaticData(boards: PersonalBoards) {
           )[0]?.id;
 
           if (!labelId) {
-            throw new Error(`No labelId for ${label} found`);
+            throw new Error(
+              `No labelId for ${label} found in ${labels.map(
+                (l: { name: string }) => l.name
+              )}`
+            );
           }
 
           acc[label] = labelId;
@@ -222,8 +232,11 @@ function calculateTaskDates(
     daysPerAssignment: number,
     round: number
   ) => {
-    const roundChars = ["", "⓵", "⓶"];
+    const roundChars = ["", "⓵", "⓶", "⓷", "⓸", "⓹", "⓺", "⓻", "⓼", "⓽", "⓾"];
     const roundChar = 1 === assignment.rounds ? "" : roundChars[round];
+    if (roundChar === undefined) {
+      throw new Error("roundChar should be defined");
+    }
 
     for (let i = 0; i < assignment.count; i++) {
       const startDate = new Date(currentDate);
@@ -235,7 +248,7 @@ function calculateTaskDates(
         hasExam && i == assignment.count - 1 ? "🧐" : toEmojiDigit(i + 1);
 
       allTasks.push({
-        subject: `${assignment.subject}${roundChar}${index}`,
+        subject: `${assignment.subject} ${roundChar}${index}`,
         startDate: startDate,
         dueDate: currentDate,
         prototype: assignment,
@@ -252,8 +265,13 @@ function calculateTaskDates(
 
     currentDate = spinTasks(assignment, currentDate, daysPerAssignment, 1);
 
-    if (2 === assignment.rounds) {
-      spinTasks(assignment, currentDate, daysPerAssignment, 2);
+    for (let round = 2; round <= assignment.rounds; round++) {
+      currentDate = spinTasks(
+        assignment,
+        currentDate,
+        daysPerAssignment,
+        round
+      );
     }
   });
 
@@ -265,8 +283,8 @@ function calculateTaskDates(
 
 // prettier-ignore
 function toEmojiDigit(n: number | string): string {
-    const digitEmojis = ['0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣'];
-    return n.toString().split('').map(d => digitEmojis[+d]).join('');
+  const digitEmojis = ['0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣'];
+  return n.toString().split('').map(d => digitEmojis[+d]).join('');
 }
 
 const queue: (() => void)[] = [];
