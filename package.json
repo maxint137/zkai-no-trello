@@ -2,15 +2,25 @@
   "name": "trello-zk",
   "version": "1.0.0",
   "description": "Generate work-plan for the kids",
-  "main": "index.js",
+  "main": "src/index.ts",
   "scripts": {
-    "start": "npx tsx generator.ts"
+    "start": "npx tsx src/index.ts",
+    "build": "tsc",
+    "lint": "eslint src/**/*.ts",
+    "test": "jest"
   },
   "author": "Max Levy",
   "dependencies": {
     "dotenv": "^16.5.0"
   },
   "devDependencies": {
-    "@types/node": "^22.15.2"
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.15.2",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
+    "@typescript-eslint/parser": "^6.9.0",
+    "eslint": "^8.52.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.5",
+    "typescript": "^5.2.2"
   }
 }

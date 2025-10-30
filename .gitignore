@@ -1,2 +1,17 @@
 node_modules/**
 .env
+
+# TypeScript generated files
+dist/
+*.js
+*.js.map
+*.d.ts
+
+# Keep JavaScript files in config
+!jest.config.js
+
+# Editor files
+.DS_Store
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
