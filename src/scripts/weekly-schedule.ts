@@ -146,6 +146,7 @@ function generateMonthlySchedule({
 }
 
 async function createMonthlySchedule(
+  userName: string,
   monthlyTasks: MonthlyTasks,
   startingClassNumber: number,
   year: number,
@@ -162,6 +163,9 @@ async function createMonthlySchedule(
     weeksCount: weeksCount,
   });
   const labelMap = new Map<string, string>();
+
+  // Get userId
+  const userId = (await trelloService.api(`members/${userName}`))?.id;
 
   // Get all labels from the board
   const labels = await trelloService.api(`boards/${boardId}/labels`);
@@ -212,11 +216,13 @@ async function createMonthlySchedule(
 
       const createdCard = await trelloService.createCard(listId, card);
       await trelloService.addLabels(createdCard.id, labelIds);
+      await trelloService.addMemberToCard(createdCard.id, userId);
     }
   }
 }
 
 async function createWeeklySchedule(
+  userName: string,
   tasks: WeeklyTaskList,
   trelloService: TrelloService,
   boardId: string,
@@ -225,6 +231,9 @@ async function createWeeklySchedule(
 ) {
   const weekDates = getNextWeekDates(weekStartDate);
   const labelMap = new Map<string, string>();
+
+  // Get userId
+  const userId = (await trelloService.api(`members/${userName}`))?.id;
 
   // Get all labels from the board
   const labels = await trelloService.api(`boards/${boardId}/labels`);
@@ -271,6 +280,7 @@ async function createWeeklySchedule(
 
     const createdCard = await trelloService.createCard(listId, card);
     await trelloService.addLabels(createdCard.id, labelIds);
+    await trelloService.addMemberToCard(createdCard.id, userId);
   }
 }
 
@@ -333,6 +343,7 @@ async function main() {
       [...Array(4).fill(SOCIAL_WEEKLY_TASKS), SOCIAL_SUMMARY_TASKS],
     ]) {
       await createMonthlySchedule(
+        "ilyalevy",
         tasks,
         startingClassNumber,
         currentYear,
