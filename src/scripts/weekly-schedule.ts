@@ -9,38 +9,71 @@ interface WeeklyTask {
   estimatedHours: number;
 }
 
+type WeeklyTaskList = WeeklyTask[];
+type MonthlyTasks = WeeklyTaskList[];
+
 // prettier-ignore
-const MATH_WEEKLY_TASKS: WeeklyTask[] = [
+const MATH_WEEKLY_TASKS: WeeklyTaskList = [
     // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
   { name: "🐧? 第回1", dayOffset: 0, labels: ["Math", "Class"], estimatedHours: 2 },
   { name: "🐧? 基本問題2", dayOffset: 1, labels: ["Math", "Class"], estimatedHours: 1 },
-  { name: "🐧? 練習問題3", dayOffset: 3, labels: ["Math", "Ex"], estimatedHours: 1.5 },
-  { name: "🐧? 反復問題(基本)4", dayOffset: 4, labels: ["Math", "Ex"], estimatedHours: 1 },
-  { name: "🐧? 反復問題(練習)5", dayOffset: 6, labels: ["Math", "Ex"], estimatedHours: 2 },
+  { name: "🐧? 練習問題3", dayOffset: 2, labels: ["Math", "Ex"], estimatedHours: 1.5 },
+  { name: "🐧? 反復問題(基本)4", dayOffset: 3, labels: ["Math", "Ex"], estimatedHours: 1 },
+  { name: "🐧? 反復問題(練習)5", dayOffset: 4, labels: ["Math", "Ex"], estimatedHours: 2 },
   { name: "🐧? トレーニング6", dayOffset: 5, labels: ["Math", "Ex"], estimatedHours: 1.5 },
-  { name: "🐧? 実戦演習7", dayOffset: 2, labels: ["Math", "Ex"], estimatedHours: 1.5 },
+  { name: "🐧? 実戦演習7", dayOffset: 6, labels: ["Math", "Ex"], estimatedHours: 1.5 },
 ];
 
 // prettier-ignore
-const SCIENCE_WEEKLY_TASKS: WeeklyTask[] = [
+const MATH_SUMMARY_TASKS: WeeklyTaskList = [
+    // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  { name: "🐧? 基本問題1", dayOffset: 0, labels: ["Math", "Class"], estimatedHours: 2 },
+  { name: "🐧? 練習問題2", dayOffset: 1, labels: ["Math", "Class"], estimatedHours: 1 },
+  { name: "🐧? ステップ🏃‍♂️", dayOffset: 2, labels: ["Math", "Ex"], estimatedHours: 1.5 },
+  { name: "🐧? ステップ🙇‍♂️", dayOffset: 3, labels: ["Math", "Ex"], estimatedHours: 1 },
+  { name: "🐧? 反ステップ🧗‍♂️", dayOffset: 4, labels: ["Math", "Ex"], estimatedHours: 2 },
+];
+
+// prettier-ignore
+const SCIENCE_WEEKLY_TASKS: WeeklyTaskList = [
     // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
   { name: "🐊? 第回1", dayOffset: 0, labels: ["Sci", "Class"], estimatedHours: 2 },
   { name: "🐊? 要点チェック2", dayOffset: 1, labels: ["Sci", "Class"], estimatedHours: 1 },
-  { name: "🐊? まとめてみよう3", dayOffset: 3, labels: ["Sci", "Ex"], estimatedHours: 1.5 },
-  { name: "🐊? 基本問題4", dayOffset: 4, labels: ["Sci", "Ex"], estimatedHours: 1 },
-  { name: "🐊? 練習問題5", dayOffset: 6, labels: ["Sci", "Ex"], estimatedHours: 2 },
-  { name: "🐊? 発展問題6", dayOffset: 6, labels: ["Sci", "Ex"], estimatedHours: 2 },
+  { name: "🐊? まとめてみよう3", dayOffset: 2, labels: ["Sci", "Ex"], estimatedHours: 1.5 },
+  { name: "🐊? 基本問題4", dayOffset: 3, labels: ["Sci", "Ex"], estimatedHours: 1 },
+  { name: "🐊? 練習問題5", dayOffset: 4, labels: ["Sci", "Ex"], estimatedHours: 2 },
+  { name: "🐊? 発展問題6", dayOffset: 5, labels: ["Sci", "Ex"], estimatedHours: 2 },
 ];
 
 // prettier-ignore
-const SOCIAL_WEEKLY_TASKS: WeeklyTask[] = [
+const SCIENCE_SUMMARY_TASKS: WeeklyTaskList = [
+    // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  { name: "🐊? 要点チェック1", dayOffset: 0, labels: ["Sci", "Class"], estimatedHours: 2 },
+  { name: "🐊? 練習問題2", dayOffset: 1, labels: ["Sci", "Class"], estimatedHours: 1 },
+  { name: "🐊? 練習問題3", dayOffset: 2, labels: ["Sci", "Ex"], estimatedHours: 1.5 },
+  { name: "🐊? 応用問題4", dayOffset: 3, labels: ["Sci", "Ex"], estimatedHours: 1 },
+  { name: "🐊? チャレンジ問題5", dayOffset: 4, labels: ["Sci", "Ex"], estimatedHours: 2 },
+];
+
+// prettier-ignore
+const SOCIAL_WEEKLY_TASKS: WeeklyTaskList = [
     // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
   { name: "🦅? 第回1", dayOffset: 0, labels: ["Soc", "Class"], estimatedHours: 2 },
   { name: "🦅? 要点チェック2", dayOffset: 1, labels: ["Soc", "Class"], estimatedHours: 1 },
-  { name: "🦅? まとめてみよう3", dayOffset: 3, labels: ["Soc", "Ex"], estimatedHours: 1.5 },
-  { name: "🦅? 基本問題4", dayOffset: 4, labels: ["Soc", "Ex"], estimatedHours: 1 },
-  { name: "🦅? 練習問題5", dayOffset: 6, labels: ["Soc", "Ex"], estimatedHours: 2 },
-  { name: "🦅? 発展問題6", dayOffset: 6, labels: ["Soc", "Ex"], estimatedHours: 2 },
+  { name: "🦅? まとめてみよう3", dayOffset: 2, labels: ["Soc", "Ex"], estimatedHours: 1.5 },
+  { name: "🦅? 基本問題4", dayOffset: 3, labels: ["Soc", "Ex"], estimatedHours: 1 },
+  { name: "🦅? 練習問題5", dayOffset: 4, labels: ["Soc", "Ex"], estimatedHours: 2 },
+  { name: "🦅? 発展問題6", dayOffset: 5, labels: ["Soc", "Ex"], estimatedHours: 2 },
+];
+
+// prettier-ignore
+const SOCIAL_SUMMARY_TASKS: WeeklyTaskList = [
+    // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  { name: "🦅? 要点チェック1", dayOffset: 0, labels: ["Soc", "Class"], estimatedHours: 2 },
+  { name: "🦅? 練習問題2", dayOffset: 1, labels: ["Soc", "Class"], estimatedHours: 1 },
+  { name: "🦅? 練習問題3", dayOffset: 2, labels: ["Soc", "Ex"], estimatedHours: 1.5 },
+  { name: "🦅? 応用問題4", dayOffset: 3, labels: ["Soc", "Ex"], estimatedHours: 1 },
+  { name: "🦅? チャレンジ問題5", dayOffset: 4, labels: ["Soc", "Ex"], estimatedHours: 2 },
 ];
 
 function getNextWeekDates(startDate: Date = new Date()): Date[] {
@@ -69,6 +102,7 @@ function getCurrentWeekNumber(date: Date = new Date()): number {
   const oneWeek = 7 * 24 * 60 * 60 * 1000;
   return Math.floor(diff / oneWeek) + 1;
 }
+
 function getFirstSundayOfMonth(year: number, month: number): Date {
   // Create date for the first of the month
   const date = new Date(year, month - 1, 1);
@@ -79,19 +113,25 @@ function getFirstSundayOfMonth(year: number, month: number): Date {
   return date;
 }
 
-function generateMonthlySchedule(
-  year: number,
-  month: number,
-  classNumber: number
-): { dates: Date[]; weekNumbers: number[] } {
+function generateMonthlySchedule({
+  year,
+  month,
+  classNumber,
+  weeksCount,
+}: {
+  year: number;
+  month: number;
+  classNumber: number;
+  weeksCount: number;
+}): { dates: Date[]; classNumbers: number[] } {
   const firstSunday = getFirstSundayOfMonth(year, month);
-  // Generate 5 weeks of dates starting from first Sunday
+  // Generate N weeks of dates starting from first Sunday
   const dates: Date[] = [];
-  const weekNumbers: number[] = [];
+  const classNumbers: number[] = [];
 
-  for (let i = 0; i < 5; i++) {
+  for (let w = 0; w < weeksCount; w++) {
     const weekStart = new Date(firstSunday);
-    weekStart.setDate(firstSunday.getDate() + i * 7);
+    weekStart.setDate(firstSunday.getDate() + w * 7);
     dates.push(
       ...Array.from({ length: 7 }, (_, j) => {
         const date = new Date(weekStart);
@@ -99,26 +139,28 @@ function generateMonthlySchedule(
         return date;
       })
     );
-    weekNumbers.push(classNumber + i);
+    classNumbers.push(classNumber + w);
   }
 
-  return { dates, weekNumbers };
+  return { dates, classNumbers };
 }
 
 async function createMonthlySchedule(
-  tasks: WeeklyTask[],
-  trelloService: TrelloService,
-  boardId: string,
-  listId: string,
+  monthlyTasks: MonthlyTasks,
+  startingClassNumber: number,
   year: number,
   month: number,
-  startingClassNumber: number
+  trelloService: TrelloService,
+  boardId: string,
+  listId: string
 ) {
-  const { dates, weekNumbers } = generateMonthlySchedule(
-    year,
-    month,
-    startingClassNumber
-  );
+  const weeksCount = monthlyTasks.length;
+  const { dates, classNumbers } = generateMonthlySchedule({
+    year: year,
+    month: month,
+    classNumber: startingClassNumber,
+    weeksCount: weeksCount,
+  });
   const labelMap = new Map<string, string>();
 
   // Get all labels from the board
@@ -128,12 +170,12 @@ async function createMonthlySchedule(
   });
 
   // Create cards for each week
-  for (let week = 0; week < 5; week++) {
+  for (let week = 0; week < weeksCount; week++) {
     const weekDates = dates.slice(week * 7, (week + 1) * 7);
-    const classNumber = weekNumbers[week];
+    const classNumber = classNumbers[week];
 
     // Create cards for each task this week
-    for (const task of tasks) {
+    for (const task of monthlyTasks[week]) {
       const dueDate = new Date(weekDates[task.dayOffset]);
       dueDate.setHours(18, 0, 0, 0); // Set due time to 6 PM
 
@@ -175,10 +217,11 @@ async function createMonthlySchedule(
 }
 
 async function createWeeklySchedule(
+  tasks: WeeklyTaskList,
   trelloService: TrelloService,
   boardId: string,
   listId: string,
-  weekStartDate: Date = new Date()
+  weekStartDate: Date
 ) {
   const weekDates = getNextWeekDates(weekStartDate);
   const labelMap = new Map<string, string>();
@@ -190,7 +233,7 @@ async function createWeeklySchedule(
   });
 
   // Create cards for each task
-  for (const task of MATH_WEEKLY_TASKS) {
+  for (const task of tasks) {
     const dueDate = weekDates[task.dayOffset];
     dueDate.setHours(18, 0, 0, 0); // Set due time to 6 PM
 
@@ -277,23 +320,26 @@ async function main() {
   // Get current date
   const now = new Date();
   const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth() + 1; // JavaScript months are 0-based
+  const currentMonth = 10; //now.getMonth() + 1; // JavaScript months are 0-based
+
   const startingClassNumber = 6; // Adjust this based on your needs
+
+  // Create arrays by repeating weekly tasks (similar to Python's list * n)
 
   try {
     for (const tasks of [
-      MATH_WEEKLY_TASKS,
-      SCIENCE_WEEKLY_TASKS,
-      SOCIAL_WEEKLY_TASKS,
+      [...Array(4).fill(MATH_WEEKLY_TASKS), MATH_SUMMARY_TASKS],
+      [...Array(4).fill(SCIENCE_WEEKLY_TASKS), SCIENCE_SUMMARY_TASKS],
+      [...Array(4).fill(SOCIAL_WEEKLY_TASKS), SOCIAL_SUMMARY_TASKS],
     ]) {
       await createMonthlySchedule(
         tasks,
-        trelloService,
-        boardId,
-        listId,
+        startingClassNumber,
         currentYear,
         currentMonth,
-        startingClassNumber
+        trelloService,
+        boardId,
+        listId
       );
       console.log(tasks[0].name + "Monthly schedule created successfully ");
     }
@@ -306,4 +352,4 @@ if (require.main === module) {
   main();
 }
 
-export { createWeeklySchedule, WeeklyTask };
+export { createWeeklySchedule, createMonthlySchedule, WeeklyTask };
