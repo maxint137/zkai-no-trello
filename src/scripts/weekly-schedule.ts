@@ -330,7 +330,7 @@ async function main() {
   // Get current date
   const now = new Date();
   const currentYear = now.getFullYear();
-  const currentMonth = 10; //now.getMonth() + 1; // JavaScript months are 0-based
+  const currentMonth = now.getMonth() + 1; // JavaScript months are 0-based
 
   const startingClassNumber = 6; // Adjust this based on your needs
 
