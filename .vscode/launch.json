@@ -20,6 +20,19 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "generator",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/src/scripts/generator.ts",
+            "preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": [
+                "${workspaceFolder}/dist/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Launch Weekly Schedule",
             "skipFiles": [
                 "<node_internals>/**"

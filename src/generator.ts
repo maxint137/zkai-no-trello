@@ -35,7 +35,7 @@ type PersonalBoards = {
   [key: string]: Board;
 };
 
-const startDate = new Date(2025, 10 - 1, 1); // October 1st, 2025 (Month is 0-indexed)
+const startDate = new Date(2025, 11 - 1, 1); // November 1st, 2025 (Month is 0-indexed)
 
 const ClassSteps: StandardStepsType = [
   {
@@ -109,31 +109,6 @@ const data_real: PersonalBoards = {
       ],
       todoListId:"",
       labelIds:{},
-  },
-  Ilya: {
-    boardName: `Ilya's ZK`,
-    userName: 'ilyalevy',
-
-    assignmentsDefinition: [
-      // { subject: 'Japanese 🇯🇵', count: 6, rounds: 2, labels: ['Jap', 'Class'], steps: ClassSteps },
-      // { subject: 'Soc. St 🌐', count: 4, rounds: 2, labels: ['Soc', 'Class'], steps: ClassSteps },
-      // { subject: 'Science 🔬', count: 4, rounds: 2, labels: ['Sci', 'Class'], steps: ClassSteps }
-      // { subject: '🐧 Class', count: 5, rounds: 1, labels: ['Math', 'Class'], steps: ClassSteps },
-      // { subject: '🐊 Class', count: 5, rounds: 1, labels: ['Sci', 'Class'], steps: ClassSteps },
-      // { subject: '🦅 Class', count: 5, rounds: 1, labels: ['Soc', 'Class'], steps: ClassSteps },
-    ],
-
-    drillsDefinition: [
-      // { subject: '🏋️ Jap.', count: 10, rounds: 1, labels: ['Jap', 'Drill'], steps: DrillSteps },
-      // { subject: 'English 🏴󠁧󠁢󠁥󠁮󠁧󠁿', count: 30 / 3, rounds: 1, labels: ['🏴󠁧󠁢󠁥󠁮󠁧󠁿'], steps: [] },
-      // { subject: 'Papa 🪆', count: 30 / 2, rounds: 1, labels: ['🍿'], steps: [] },
-      // { subject: '🐊 Ex', count: 4, rounds: 5, labels: ['Sci', 'Ex'], steps: DrillSteps },
-      // { subject: '🦅 Ex', count: 3, rounds: 5, labels: ['Soc', 'Ex'], steps: DrillSteps },
-      // { subject: '🐧 Ex', count: 4, rounds: 5, labels: ['Math', 'Ex'], steps: DrillSteps },
-      // { subject: '🐧 Drill', count: 7, rounds: 5, labels: ['Math', 'Drill'], steps: DrillSteps },
-    ],
-    todoListId: "",
-    labelIds: {},
   },
 }
 
