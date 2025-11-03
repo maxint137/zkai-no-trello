@@ -37,21 +37,21 @@ export function createDryRunApi(debugLog: boolean = true) {
     // await new Promise((resolve) => setTimeout(resolve, 100));
 
     // Handle different endpoints
-    if (endpoint.startsWith("members/")) {
-      const userName = endpoint.split("/")[1];
-      if (userName === "me") {
-        return [{ id: "me_1", name: "Ilya" }];
-      }
+    // if (endpoint.startsWith("members/")) {
+    //   const userName = endpoint.split("/")[1];
+    //   if (userName === "me") {
+    //     return [{ id: "me_1", name: "Ilya" }];
+    //   }
 
-      let user = mockData.users.get(userName);
-      if (!user) {
-        user = { id: generateId("user") };
-        mockData.users.set(userName, user);
-      }
-      return user;
-    }
+    //   let user = mockData.users.get(userName);
+    //   if (!user) {
+    //     user = { id: generateId("user") };
+    //     mockData.users.set(userName, user);
+    //   }
+    //   return user;
+    // }
 
-    if (endpoint === "/members/me/boards") {
+    if (endpoint === "members/me/boards") {
       // Pre-populate boards if empty
       if (mockData.boards.size === 0) {
         mockData.boards.set("adams_board", {
