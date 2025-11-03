@@ -5,7 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "npx tsx src/index.ts",
-    "adam": "npx tsx src/generator.ts",
+    "ilya": "npx tsx src/scripts/weekly-schedule.ts",
+    "adam": "npx tsx src/scripts/generator.ts",
     "build": "tsc",
     "lint": "eslint src/**/*.ts",
     "test": "jest"

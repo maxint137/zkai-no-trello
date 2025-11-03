@@ -1,6 +1,10 @@
 import { TrelloService, createTrelloService } from "../api/trello-service";
 import { Card } from "../types/board";
 import { toEmojiDigit } from "../utils/emoji";
+import {
+  getDateRangeFromISOWeek,
+  getISOWeek,
+} from "../utils/iso_week_calculator";
 
 interface WeeklyTask {
   name: string;
@@ -11,6 +15,11 @@ interface WeeklyTask {
 
 type WeeklyTaskList = WeeklyTask[];
 type MonthlyTasks = WeeklyTaskList[];
+
+// the initial parameters
+const kickOffDate = new Date(2025, 11 - 1, 9); // month is 0-indexed
+const startingClassNumber = 11;
+const dryRun = false; // Set to false to run against real Trello API
 
 // prettier-ignore
 const MATH_WEEKLY_TASKS: WeeklyTaskList = [
@@ -76,66 +85,26 @@ const SOCIAL_SUMMARY_TASKS: WeeklyTaskList = [
   { name: "🦅? チャレンジ問題5", dayOffset: 4, labels: ["Soc", "Ex"], estimatedHours: 2 },
 ];
 
-function getNextWeekDates(startDate: Date = new Date()): Date[] {
-  // Find next Sunday
-  const sunday = new Date(startDate);
-  const daysUntilSunday = (7 - sunday.getDay()) % 7;
-  sunday.setDate(sunday.getDate() + daysUntilSunday);
-
-  // Generate dates for the week
-  return Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(sunday);
-    date.setDate(sunday.getDate() + i);
-    return date;
-  });
-}
-
-function getCurrentWeekNumber(date: Date = new Date()): number {
-  // Get the first day of the year
-  const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-  // Get the first Sunday of the year
-  while (firstDayOfYear.getDay() !== 0) {
-    firstDayOfYear.setDate(firstDayOfYear.getDate() + 1);
-  }
-
-  const diff = date.getTime() - firstDayOfYear.getTime();
-  const oneWeek = 7 * 24 * 60 * 60 * 1000;
-  return Math.floor(diff / oneWeek) + 1;
-}
-
-function getFirstSundayOfMonth(year: number, month: number): Date {
-  // Create date for the first of the month
-  const date = new Date(year, month - 1, 1);
-  // Find the first Sunday
-  while (date.getDay() !== 0) {
-    date.setDate(date.getDate() + 1);
-  }
-  return date;
-}
-
-function generateMonthlySchedule({
-  year,
-  month,
+function generateTrancheSchedule({
+  firstSaturday,
   classNumber,
   weeksCount,
 }: {
-  year: number;
-  month: number;
+  firstSaturday: Date;
   classNumber: number;
   weeksCount: number;
 }): { dates: Date[]; classNumbers: number[] } {
-  const firstSunday = getFirstSundayOfMonth(year, month);
   // Generate N weeks of dates starting from first Sunday
   const dates: Date[] = [];
   const classNumbers: number[] = [];
 
   for (let w = 0; w < weeksCount; w++) {
-    const weekStart = new Date(firstSunday);
-    weekStart.setDate(firstSunday.getDate() + w * 7);
+    const workStart = new Date(firstSaturday);
+    workStart.setDate(firstSaturday.getDate() + w * 7);
     dates.push(
       ...Array.from({ length: 7 }, (_, j) => {
-        const date = new Date(weekStart);
-        date.setDate(weekStart.getDate() + j);
+        const date = new Date(workStart);
+        date.setDate(workStart.getDate() + j);
         return date;
       })
     );
@@ -145,20 +114,22 @@ function generateMonthlySchedule({
   return { dates, classNumbers };
 }
 
-async function createMonthlySchedule(
+async function createTrancheSchedule(
   userName: string,
   monthlyTasks: MonthlyTasks,
   startingClassNumber: number,
   year: number,
-  month: number,
+  startingWeekNumber: number,
   trelloService: TrelloService,
   boardId: string,
   listId: string
 ) {
   const weeksCount = monthlyTasks.length;
-  const { dates, classNumbers } = generateMonthlySchedule({
-    year: year,
-    month: month,
+
+  const firstWeek = getDateRangeFromISOWeek(year, startingWeekNumber);
+
+  const { dates, classNumbers } = generateTrancheSchedule({
+    firstSaturday: firstWeek.weekEnd,
     classNumber: startingClassNumber,
     weeksCount: weeksCount,
   });
@@ -221,69 +192,6 @@ async function createMonthlySchedule(
   }
 }
 
-async function createWeeklySchedule(
-  userName: string,
-  tasks: WeeklyTaskList,
-  trelloService: TrelloService,
-  boardId: string,
-  listId: string,
-  weekStartDate: Date
-) {
-  const weekDates = getNextWeekDates(weekStartDate);
-  const labelMap = new Map<string, string>();
-
-  // Get userId
-  const userId = (await trelloService.api(`members/${userName}`))?.id;
-
-  // Get all labels from the board
-  const labels = await trelloService.api(`boards/${boardId}/labels`);
-  labels.forEach((label: { name: string; id: string }) => {
-    labelMap.set(label.name, label.id);
-  });
-
-  // Create cards for each task
-  for (const task of tasks) {
-    const dueDate = weekDates[task.dayOffset];
-    dueDate.setHours(18, 0, 0, 0); // Set due time to 6 PM
-
-    const startDate = new Date(dueDate);
-    startDate.setHours(startDate.getHours() - task.estimatedHours);
-
-    const labelIds = task.labels
-      .map((labelName) => {
-        const labelId = labelMap.get(labelName);
-        if (!labelId) {
-          console.warn(`Label "${labelName}" not found on board`);
-        }
-        return labelId;
-      })
-      .filter((id): id is string => id !== undefined);
-
-    if (labelIds.length === 0) {
-      console.warn(`No valid labels found for task "${task.name}"`);
-      continue;
-    }
-
-    const weekNumber = getCurrentWeekNumber(dueDate);
-    const card: Card = {
-      subject: `Week ${weekNumber} - ${task.name}`,
-      startDate: startDate,
-      dueDate: dueDate,
-      prototype: {
-        subject: task.name,
-        count: weekNumber, // Use week number as count
-        rounds: 1,
-        labels: task.labels,
-        steps: [],
-      },
-    };
-
-    const createdCard = await trelloService.createCard(listId, card);
-    await trelloService.addLabels(createdCard.id, labelIds);
-    await trelloService.addMemberToCard(createdCard.id, userId);
-  }
-}
-
 async function findBoardId(
   trelloService: TrelloService,
   boardName: string
@@ -320,7 +228,6 @@ async function findListId(
 }
 
 async function main() {
-  const dryRun = false; // Set to false to run against real Trello API
   const trelloService = createTrelloService(dryRun);
 
   // Look up board and list IDs by name
@@ -330,9 +237,6 @@ async function main() {
   // Get current date
   const now = new Date();
   const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth() + 1; // JavaScript months are 0-based
-
-  const startingClassNumber = 6; // Adjust this based on your needs
 
   // Create arrays by repeating weekly tasks (similar to Python's list * n)
 
@@ -342,12 +246,12 @@ async function main() {
       [...Array(4).fill(SCIENCE_WEEKLY_TASKS), SCIENCE_SUMMARY_TASKS],
       [...Array(4).fill(SOCIAL_WEEKLY_TASKS), SOCIAL_SUMMARY_TASKS],
     ]) {
-      await createMonthlySchedule(
+      await createTrancheSchedule(
         "ilyalevy",
         tasks,
         startingClassNumber,
         currentYear,
-        currentMonth,
+        getISOWeek(kickOffDate).week,
         trelloService,
         boardId,
         listId
@@ -363,4 +267,4 @@ if (require.main === module) {
   main();
 }
 
-export { createWeeklySchedule, createMonthlySchedule, WeeklyTask };
+export { createTrancheSchedule, WeeklyTask };
