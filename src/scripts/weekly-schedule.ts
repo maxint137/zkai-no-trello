@@ -14,12 +14,12 @@ interface WeeklyTask {
 }
 
 type WeeklyTaskList = WeeklyTask[];
-type MonthlyTasks = WeeklyTaskList[];
+type TasksTranche = WeeklyTaskList[];
 
 // the initial parameters
 const kickOffDate = new Date(2025, 11 - 1, 9); // month is 0-indexed
 const startingClassNumber = 11;
-const dryRun = false; // Set to false to run against real Trello API
+const dryRun = true; // Set to false to run against real Trello API
 
 // prettier-ignore
 const MATH_WEEKLY_TASKS: WeeklyTaskList = [
@@ -88,17 +88,17 @@ const SOCIAL_SUMMARY_TASKS: WeeklyTaskList = [
 function generateTrancheSchedule({
   firstSaturday,
   classNumber,
-  weeksCount,
+  trancheLen,
 }: {
   firstSaturday: Date;
   classNumber: number;
-  weeksCount: number;
+  trancheLen: number;
 }): { dates: Date[]; classNumbers: number[] } {
   // Generate N weeks of dates starting from first Sunday
   const dates: Date[] = [];
   const classNumbers: number[] = [];
 
-  for (let w = 0; w < weeksCount; w++) {
+  for (let w = 0; w < trancheLen; w++) {
     const workStart = new Date(firstSaturday);
     workStart.setDate(firstSaturday.getDate() + w * 7);
     dates.push(
@@ -116,7 +116,7 @@ function generateTrancheSchedule({
 
 async function createTrancheSchedule(
   userName: string,
-  monthlyTasks: MonthlyTasks,
+  tasksTranche: TasksTranche,
   startingClassNumber: number,
   year: number,
   startingWeekNumber: number,
@@ -124,14 +124,14 @@ async function createTrancheSchedule(
   boardId: string,
   listId: string
 ) {
-  const weeksCount = monthlyTasks.length;
+  const trancheLen = tasksTranche.length;
 
   const firstWeek = getDateRangeFromISOWeek(year, startingWeekNumber);
 
   const { dates, classNumbers } = generateTrancheSchedule({
     firstSaturday: firstWeek.weekEnd,
     classNumber: startingClassNumber,
-    weeksCount: weeksCount,
+    trancheLen: trancheLen,
   });
   const labelMap = new Map<string, string>();
 
@@ -145,12 +145,12 @@ async function createTrancheSchedule(
   });
 
   // Create cards for each week
-  for (let week = 0; week < weeksCount; week++) {
+  for (let week = 0; week < trancheLen; week++) {
     const weekDates = dates.slice(week * 7, (week + 1) * 7);
     const classNumber = classNumbers[week];
 
     // Create cards for each task this week
-    for (const task of monthlyTasks[week]) {
+    for (const task of tasksTranche[week]) {
       const dueDate = new Date(weekDates[task.dayOffset]);
       dueDate.setHours(18, 0, 0, 0); // Set due time to 6 PM
 
@@ -241,14 +241,14 @@ async function main() {
   // Create arrays by repeating weekly tasks (similar to Python's list * n)
 
   try {
-    for (const tasks of [
+    for (const tranche of [
       [...Array(4).fill(MATH_WEEKLY_TASKS), MATH_SUMMARY_TASKS],
       [...Array(4).fill(SCIENCE_WEEKLY_TASKS), SCIENCE_SUMMARY_TASKS],
       [...Array(4).fill(SOCIAL_WEEKLY_TASKS), SOCIAL_SUMMARY_TASKS],
     ]) {
       await createTrancheSchedule(
         "ilyalevy",
-        tasks,
+        tranche,
         startingClassNumber,
         currentYear,
         getISOWeek(kickOffDate).week,
@@ -256,7 +256,9 @@ async function main() {
         boardId,
         listId
       );
-      console.log(tasks[0].name + "Monthly schedule created successfully ");
+      console.log(
+        tranche[0][0].name + "Monthly schedule created successfully "
+      );
     }
   } catch (error) {
     console.error("Error creating monthly schedule:", error);
