@@ -1,5 +1,5 @@
 import { TrelloService, createTrelloService } from "../api/trello-service";
-import { Card } from "../types/board";
+import { Card, StandardStepsType } from "../types/board";
 import { toEmojiDigit } from "../utils/emoji";
 import {
   getDateRangeFromISOWeek,
@@ -10,8 +10,20 @@ interface WeeklyTask {
   name: string;
   dayOffset: number; // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
   labels: string[]; // Array of label names or IDs
+  steps?: StandardStepsType;
   estimatedHours: number;
 }
+
+const ProblemSteps: StandardStepsType = [
+  {
+    name: "Student",
+    items: ["Solve", "Review"],
+  },
+  {
+    name: "Teacher",
+    items: ["Review", "Discuss Mistakes"],
+  },
+];
 
 type WeeklyTaskList = WeeklyTask[];
 type TasksTranche = WeeklyTaskList[];
@@ -25,65 +37,60 @@ const dryRun = true; // Set to false to run against real Trello API
 const MATH_WEEKLY_TASKS: WeeklyTaskList = [
     // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
   { name: "🐧? 第回1", dayOffset: 0, labels: ["Math", "Class"], estimatedHours: 2 },
-  { name: "🐧? 基本問題2", dayOffset: 1, labels: ["Math", "Class"], estimatedHours: 1 },
-  { name: "🐧? 練習問題3", dayOffset: 2, labels: ["Math", "Ex"], estimatedHours: 1.5 },
-  { name: "🐧? 反復問題(基本)4", dayOffset: 3, labels: ["Math", "Ex"], estimatedHours: 1 },
-  { name: "🐧? 反復問題(練習)5", dayOffset: 4, labels: ["Math", "Ex"], estimatedHours: 2 },
-  { name: "🐧? トレーニング6", dayOffset: 5, labels: ["Math", "Ex"], estimatedHours: 1.5 },
-  { name: "🐧? 実戦演習7", dayOffset: 6, labels: ["Math", "Ex"], estimatedHours: 1.5 },
+  { name: "🐧? 基本問題2", dayOffset: 1, labels: ["Math", "Class"], steps: ProblemSteps, estimatedHours: 1 },
+  { name: "🐧? 練習問題3", dayOffset: 2, labels: ["Math", "Class"], steps: ProblemSteps, estimatedHours: 1.5 },
+  { name: "🐧? 反復問題(基本)4", dayOffset: 3, labels: ["Math", "Ex"], steps: ProblemSteps, estimatedHours: 1 },
+  { name: "🐧? 反復問題(練習)5", dayOffset: 4, labels: ["Math", "Ex"], steps: ProblemSteps, estimatedHours: 2 },
+  { name: "🐧? トレーニング6", dayOffset: 5, labels: ["Math", "Ex"], steps: ProblemSteps, estimatedHours: 1.5 },
+  { name: "🐧? 実戦演習7", dayOffset: 6, labels: ["Math", "Ex"], steps: ProblemSteps, estimatedHours: 1.5 },
 ];
 
 // prettier-ignore
 const MATH_SUMMARY_TASKS: WeeklyTaskList = [
     // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  { name: "🐧? 基本問題1", dayOffset: 0, labels: ["Math", "Class"], estimatedHours: 2 },
-  { name: "🐧? 練習問題2", dayOffset: 1, labels: ["Math", "Class"], estimatedHours: 1 },
-  { name: "🐧? ステップ🏃‍♂️", dayOffset: 2, labels: ["Math", "Ex"], estimatedHours: 1.5 },
-  { name: "🐧? ステップ🙇‍♂️", dayOffset: 3, labels: ["Math", "Ex"], estimatedHours: 1 },
-  { name: "🐧? 反ステップ🧗‍♂️", dayOffset: 4, labels: ["Math", "Ex"], estimatedHours: 2 },
+  { name: "🐧? 基本問題1", dayOffset: 0, labels: ["Math", "Class"], steps: ProblemSteps, estimatedHours: 2 },
+  { name: "🐧? 練習問題2", dayOffset: 1, labels: ["Math", "Class"], steps: ProblemSteps, estimatedHours: 1 },
+  { name: "🐧? ステップ🏃‍♂️", dayOffset: 2, labels: ["Math", "Ex"], steps: ProblemSteps, estimatedHours: 1.5 },
+  { name: "🐧? ステップ🙇‍♂️", dayOffset: 3, labels: ["Math", "Ex"], steps: ProblemSteps, estimatedHours: 1 },
+  { name: "🐧? 反ステップ🧗‍♂️", dayOffset: 4, labels: ["Math", "Ex"], steps: ProblemSteps, estimatedHours: 2 },
 ];
 
 // prettier-ignore
-const SCIENCE_WEEKLY_TASKS: WeeklyTaskList = [
+const make_weekly_tasks = (
+  subject_emoji: string,
+  subject_code: string
+): WeeklyTaskList => {
+  return [
     // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  { name: "🐊? 第回1", dayOffset: 0, labels: ["Sci", "Class"], estimatedHours: 2 },
-  { name: "🐊? 要点チェック2", dayOffset: 1, labels: ["Sci", "Class"], estimatedHours: 1 },
-  { name: "🐊? まとめてみよう3", dayOffset: 2, labels: ["Sci", "Ex"], estimatedHours: 1.5 },
-  { name: "🐊? 基本問題4", dayOffset: 3, labels: ["Sci", "Ex"], estimatedHours: 1 },
-  { name: "🐊? 練習問題5", dayOffset: 4, labels: ["Sci", "Ex"], estimatedHours: 2 },
-  { name: "🐊? 発展問題6", dayOffset: 5, labels: ["Sci", "Ex"], estimatedHours: 2 },
-];
+    { name: `${subject_emoji}? 第回1`, dayOffset: 0, labels: [subject_code, "Class"], estimatedHours: 2, },
+    { name: `${subject_emoji}? 要点チェック2`, dayOffset: 1, labels: [subject_code, "Class"], steps: ProblemSteps, estimatedHours: 1, },
+    { name: `${subject_emoji}? まとめてみよう3`, dayOffset: 2, labels: [subject_code, "Ex"], steps: ProblemSteps, estimatedHours: 1.5, },
+    { name: `${subject_emoji}? 基本問題4`, dayOffset: 3, labels: [subject_code, "Ex"], steps: ProblemSteps, estimatedHours: 1, },
+    { name: `${subject_emoji}? 練習問題5`, dayOffset: 4, labels: [subject_code, "Ex"], steps: ProblemSteps, estimatedHours: 2, },
+    { name: `${subject_emoji}? 発展問題6`, dayOffset: 5, labels: [subject_code, "Ex"], steps: ProblemSteps, estimatedHours: 2, },
+  ];
+};
 
 // prettier-ignore
-const SCIENCE_SUMMARY_TASKS: WeeklyTaskList = [
+const make_summary_tasks = (
+  subject_emoji: string,
+  subject_code: string
+): WeeklyTaskList => {
+  return [
     // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  { name: "🐊? 要点チェック1", dayOffset: 0, labels: ["Sci", "Class"], estimatedHours: 2 },
-  { name: "🐊? 練習問題2", dayOffset: 1, labels: ["Sci", "Class"], estimatedHours: 1 },
-  { name: "🐊? 練習問題3", dayOffset: 2, labels: ["Sci", "Ex"], estimatedHours: 1.5 },
-  { name: "🐊? 応用問題4", dayOffset: 3, labels: ["Sci", "Ex"], estimatedHours: 1 },
-  { name: "🐊? チャレンジ問題5", dayOffset: 4, labels: ["Sci", "Ex"], estimatedHours: 2 },
-];
+    { name: `${subject_emoji}? 要点チェック1`, dayOffset: 0, labels: [subject_code, "Class"], estimatedHours: 2, },
+    { name: `${subject_emoji}? 練習問題2`, dayOffset: 1, labels: [subject_code, "Class"], steps: ProblemSteps, estimatedHours: 1, },
+    { name: `${subject_emoji}? 練習問題3`, dayOffset: 2, labels: [subject_code, "Ex"], steps: ProblemSteps, estimatedHours: 1.5, },
+    { name: `${subject_emoji}? 応用問題4`, dayOffset: 3, labels: [subject_code, "Ex"], steps: ProblemSteps, estimatedHours: 1, },
+    { name: `${subject_emoji}? チャレンジ問題5`, dayOffset: 4, labels: [subject_code, "Ex"], steps: ProblemSteps, estimatedHours: 2, },
+  ];
+};
 
-// prettier-ignore
-const SOCIAL_WEEKLY_TASKS: WeeklyTaskList = [
-    // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  { name: "🦅? 第回1", dayOffset: 0, labels: ["Soc", "Class"], estimatedHours: 2 },
-  { name: "🦅? 要点チェック2", dayOffset: 1, labels: ["Soc", "Class"], estimatedHours: 1 },
-  { name: "🦅? まとめてみよう3", dayOffset: 2, labels: ["Soc", "Ex"], estimatedHours: 1.5 },
-  { name: "🦅? 基本問題4", dayOffset: 3, labels: ["Soc", "Ex"], estimatedHours: 1 },
-  { name: "🦅? 練習問題5", dayOffset: 4, labels: ["Soc", "Ex"], estimatedHours: 2 },
-  { name: "🦅? 発展問題6", dayOffset: 5, labels: ["Soc", "Ex"], estimatedHours: 2 },
-];
+const SCIENCE_WEEKLY_TASKS: WeeklyTaskList = make_weekly_tasks("🐊", "Sci");
+const SCIENCE_SUMMARY_TASKS: WeeklyTaskList = make_summary_tasks("🐊", "Sci");
 
-// prettier-ignore
-const SOCIAL_SUMMARY_TASKS: WeeklyTaskList = [
-    // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  { name: "🦅? 要点チェック1", dayOffset: 0, labels: ["Soc", "Class"], estimatedHours: 2 },
-  { name: "🦅? 練習問題2", dayOffset: 1, labels: ["Soc", "Class"], estimatedHours: 1 },
-  { name: "🦅? 練習問題3", dayOffset: 2, labels: ["Soc", "Ex"], estimatedHours: 1.5 },
-  { name: "🦅? 応用問題4", dayOffset: 3, labels: ["Soc", "Ex"], estimatedHours: 1 },
-  { name: "🦅? チャレンジ問題5", dayOffset: 4, labels: ["Soc", "Ex"], estimatedHours: 2 },
-];
+const SOCIAL_WEEKLY_TASKS: WeeklyTaskList = make_weekly_tasks("🦅", "Soc");
+const SOCIAL_SUMMARY_TASKS: WeeklyTaskList = make_summary_tasks("🦅", "Soc");
 
 function generateTrancheSchedule({
   firstSaturday,
@@ -186,7 +193,9 @@ async function createTrancheSchedule(
       };
 
       const createdCard = await trelloService.createCard(listId, card);
+      await trelloService.addChecklist(createdCard.id, task.steps || []);
       await trelloService.addLabels(createdCard.id, labelIds);
+
       await trelloService.addMemberToCard(createdCard.id, userId);
     }
   }
