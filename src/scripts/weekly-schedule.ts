@@ -29,9 +29,9 @@ type WeeklyTaskList = WeeklyTask[];
 type TasksTranche = WeeklyTaskList[];
 
 // the initial parameters
-const kickOffDate = new Date(2025, 11 - 1, 9); // month is 0-indexed
-const startingClassNumber = 11;
-const dryRun = true; // Set to false to run against real Trello API
+const kickOffDate = new Date(2025, 12 - 1, 14); // month is 0-indexed
+const startingClassNumber = 16;
+const dryRun = false; // Set to false to run against real Trello API
 
 // prettier-ignore
 const MATH_WEEKLY_TASKS: WeeklyTaskList = [

@@ -86,7 +86,7 @@ console.log(`Week starts: ${isoWeek.weekStart.toDateString()}`);
 console.log(`Week ends: ${isoWeek.weekEnd.toDateString()}`);
 
 // Get dates for a specific ISO week
-const { weekStart, weekEnd } = getDateRangeFromISOWeek(2025, 1);
-console.log(`\nISO Week 1 of 2025:`);
-console.log(`Starts: ${weekStart.toDateString()}`);
-console.log(`Ends: ${weekEnd.toDateString()}`);
+// const { weekStart, weekEnd } = getDateRangeFromISOWeek(2025, 1);
+// console.log(`\nISO Week 1 of 2025:`);
+// console.log(`Starts: ${weekStart.toDateString()}`);
+// console.log(`Ends: ${weekEnd.toDateString()}`);

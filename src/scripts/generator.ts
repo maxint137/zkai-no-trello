@@ -35,7 +35,7 @@ type PersonalBoards = {
   [key: string]: Board;
 };
 
-const startDate = new Date(2025, 11 - 1, 1); // November 1st, 2025 (Month is 0-indexed)
+const startDate = new Date(2025, 12 - 1, 1); // November 1st, 2025 (Month is 0-indexed)
 
 const ClassSteps: StandardStepsType = [
   {
