@@ -35,6 +35,7 @@ const kickOffDate = new Date(2026, 2 - 1, 8); // month is 0-indexed
 const startingClassNumber = 1;
 const dryRun = false;
 
+// prettier-ignore
 const make_weekly_tasks_ex = (emoji: string, subject: string): WeeklyTaskList => [
   // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
   { name: `${emoji}? 第回1`, dayOffset: 0, labels: [subject, "Class"], estimatedHours: 2 },
@@ -56,6 +57,7 @@ const make_summary_tasks_ex = (emoji: string, subject: string): WeeklyTaskList =
   { name: `${emoji}? 反ステップ🧗‍♂️`, dayOffset: 4, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 2 },
 ];
 
+// prettier-ignore
 const make_weekly_tasks = (
   emoji: string,
   subject: string
@@ -69,6 +71,7 @@ const make_weekly_tasks = (
     { name: `${emoji}? 発展問題6`, dayOffset: 5, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 2, },
   ];
 
+// prettier-ignore
 const make_summary_tasks = (
   emoji: string,
   subject: string
@@ -90,16 +93,20 @@ type WorkRecord = Record<
 const work: Record<string, WorkRecord> = {
   Ilya: {
     MATH: {
-      WEEKLY: make_weekly_tasks_ex("🐧", "Math"),
-      SUMMARY: make_summary_tasks_ex("🐧", "Math"),
+      WEEKLY: make_weekly_tasks_ex("🦈", "Math"),
+      SUMMARY: make_summary_tasks_ex("🦈", "Math"),
+    },
+    JAPANESE: {
+      WEEKLY: make_weekly_tasks_ex("🦤", "Jap"),
+      SUMMARY: make_summary_tasks_ex("🦤", "Jap"),
     },
     SCIENCE: {
-      WEEKLY: make_weekly_tasks("🐊", "Sci"),
-      SUMMARY: make_summary_tasks("🐊", "Sci"),
+      WEEKLY: make_weekly_tasks("🐯", "Sci"),
+      SUMMARY: make_summary_tasks("🐯", "Sci"),
     },
     SOCIAL: {
-      WEEKLY: make_weekly_tasks("🦅", "Soc"),
-      SUMMARY: make_summary_tasks("🦅", "Soc"),
+      WEEKLY: make_weekly_tasks("🦘", "Soc"),
+      SUMMARY: make_summary_tasks("🦘", "Soc"),
     },
   },
   Adam: {
@@ -143,7 +150,7 @@ function generateTrancheSchedule({
         const date = new Date(workStart);
         date.setDate(workStart.getDate() + j);
         return date;
-      })
+      }),
     );
     classNumbers.push(classNumber + w);
   }
@@ -159,7 +166,7 @@ async function createTrancheSchedule(
   startingWeekNumber: number,
   trelloService: TrelloService,
   boardId: string,
-  listId: string
+  listId: string,
 ) {
   const trancheLen = tasksTranche.length;
 
@@ -233,12 +240,12 @@ async function createTrancheSchedule(
 
 async function findBoardId(
   trelloService: TrelloService,
-  boardName: string
+  boardName: string,
 ): Promise<string> {
   const boards = await trelloService.api("members/me/boards");
   const board = boards.find(
     (b: { name: string; id: string }) =>
-      b.name.toLowerCase() === boardName.toLowerCase()
+      b.name.toLowerCase() === boardName.toLowerCase(),
   );
 
   if (!board) {
@@ -251,12 +258,12 @@ async function findBoardId(
 async function findListId(
   trelloService: TrelloService,
   boardId: string,
-  listName: string
+  listName: string,
 ): Promise<string> {
   const lists = await trelloService.api(`boards/${boardId}/lists`);
   const list = lists.find(
     (l: { name: string; id: string }) =>
-      l.name.toLowerCase() === listName.toLowerCase()
+      l.name.toLowerCase() === listName.toLowerCase(),
   );
 
   if (!list) {
@@ -293,17 +300,17 @@ async function main(userName: "Ilya" | "Adam") {
   try {
     for (const tranche of tranches) {
       await createTrancheSchedule(
-        `${userName.toLowerCase()}levy`,
+        userName == "Ilya" ? "ilyalevy" : "adamlevy74",
         tranche,
         startingClassNumber,
         currentYear,
         getISOWeek(kickOffDate).week,
         trelloService,
         boardId,
-        listId
+        listId,
       );
       console.log(
-        tranche[0][0].name + "Monthly schedule created successfully "
+        tranche[0][0].name + "Monthly schedule created successfully ",
       );
     }
   } catch (error) {
@@ -312,7 +319,6 @@ async function main(userName: "Ilya" | "Adam") {
 }
 
 if (require.main === module) {
-
   const args = process.argv.slice(2);
   const childName = args[0];
 
