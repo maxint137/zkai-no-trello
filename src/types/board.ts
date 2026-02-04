@@ -5,7 +5,7 @@ export interface Assignment {
   count: number;
   rounds: number;
   labels: string[];
-  steps: StandardStepsType;
+  steps?: StandardStepsType;
 }
 
 export interface Board {

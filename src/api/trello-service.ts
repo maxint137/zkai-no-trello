@@ -6,6 +6,7 @@ import {
   addLabels as addLabelsOriginal,
   addMemberToCard as addMemberOriginal,
   trelloApi as trelloApiOriginal,
+  card_payload,
 } from "./trello-client";
 import { createDryRunApi } from "./trello-client-dry";
 
@@ -22,14 +23,7 @@ export function createTrelloService(isDryRun: boolean = false): TrelloService {
     const trelloApiImpl = createDryRunApi(true);
     return {
       createCard: (listId: string, card: Card) =>
-        trelloApiImpl!("cards", {
-          name: card.subject,
-          desc: "See the checklist for detailed steps",
-          start: card.startDate,
-          due: card.dueDate,
-          idList: listId,
-          pos: "bottom",
-        }),
+        trelloApiImpl!("cards", card_payload(card, listId)),
 
       addChecklist: (cardId: string, steps: StandardStepsType) =>
         trelloApiImpl!("checklists", { idCard: cardId, steps: steps }),

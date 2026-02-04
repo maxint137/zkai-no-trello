@@ -44,24 +44,24 @@ async function _trelloApi(endpoint: string, body: any = null): Promise<any> {
   }
 }
 
+export const card_payload = (card: Card, listId: string) => ({
+  name: card.subject,
+  desc: card.prototype.steps ? "See the checklist for detailed steps 👇" : "💪 Just do it!",
+  start: card.startDate,
+  due: card.dueDate,
+  idList: listId,
+  pos: "bottom",
+})
+
 export async function createCard(
   listId: string,
   card: Card
 ): Promise<TrelloCardResponse> {
   console.log(
-    `Creating card for ${
-      card.subject
-    } ${card.startDate.toLocaleDateString()} -> ${card.dueDate.toLocaleDateString()}`
+    `Creating card for ${card.subject} ${card.startDate.toLocaleDateString()} -> ${card.dueDate.toLocaleDateString()}`
   );
 
-  return await trelloApi(`cards`, {
-    name: card.subject,
-    desc: "See the checklist for detailed steps",
-    start: card.startDate,
-    due: card.dueDate,
-    idList: listId,
-    pos: "bottom",
-  });
+  return await trelloApi(`cards`, card_payload(card, listId));
 }
 
 export async function addChecklist(

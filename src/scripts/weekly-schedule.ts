@@ -14,6 +14,8 @@ interface WeeklyTask {
   estimatedHours: number;
 }
 
+const ToDoListName = "To Do 🌞";
+
 const ProblemSteps: StandardStepsType = [
   {
     name: "Student",
@@ -29,68 +31,96 @@ type WeeklyTaskList = WeeklyTask[];
 type TasksTranche = WeeklyTaskList[];
 
 // the initial parameters
-const kickOffDate = new Date(2025, 12 - 1, 14); // month is 0-indexed
-const startingClassNumber = 16;
-const dryRun = false; // Set to false to run against real Trello API
+const kickOffDate = new Date(2026, 2 - 1, 8); // month is 0-indexed
+const startingClassNumber = 1;
+const dryRun = false;
 
-// prettier-ignore
-const MATH_WEEKLY_TASKS: WeeklyTaskList = [
-    // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  { name: "🐧? 第回1", dayOffset: 0, labels: ["Math", "Class"], estimatedHours: 2 },
-  { name: "🐧? 基本問題2", dayOffset: 1, labels: ["Math", "Class"], steps: ProblemSteps, estimatedHours: 1 },
-  { name: "🐧? 練習問題3", dayOffset: 2, labels: ["Math", "Class"], steps: ProblemSteps, estimatedHours: 1.5 },
-  { name: "🐧? 反復問題(基本)4", dayOffset: 3, labels: ["Math", "Ex"], steps: ProblemSteps, estimatedHours: 1 },
-  { name: "🐧? 反復問題(練習)5", dayOffset: 4, labels: ["Math", "Ex"], steps: ProblemSteps, estimatedHours: 2 },
-  { name: "🐧? トレーニング6", dayOffset: 5, labels: ["Math", "Ex"], steps: ProblemSteps, estimatedHours: 1.5 },
-  { name: "🐧? 実戦演習7", dayOffset: 6, labels: ["Math", "Ex"], steps: ProblemSteps, estimatedHours: 1.5 },
+const make_weekly_tasks_ex = (emoji: string, subject: string): WeeklyTaskList => [
+  // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  { name: `${emoji}? 第回1`, dayOffset: 0, labels: [subject, "Class"], estimatedHours: 2 },
+  { name: `${emoji}? 基本問題2`, dayOffset: 1, labels: [subject, "Class"], steps: ProblemSteps, estimatedHours: 1 },
+  { name: `${emoji}? 練習問題3`, dayOffset: 2, labels: [subject, "Class"], steps: ProblemSteps, estimatedHours: 1.5 },
+  { name: `${emoji}? 反復問題(基本)4`, dayOffset: 3, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 1 },
+  { name: `${emoji}? 反復問題(練習)5`, dayOffset: 4, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 2 },
+  { name: `${emoji}? トレーニング6`, dayOffset: 5, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 1.5 },
+  { name: `${emoji}? 実戦演習7`, dayOffset: 6, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 1.5 },
 ];
 
 // prettier-ignore
-const MATH_SUMMARY_TASKS: WeeklyTaskList = [
-    // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  { name: "🐧? 基本問題1", dayOffset: 0, labels: ["Math", "Class"], steps: ProblemSteps, estimatedHours: 2 },
-  { name: "🐧? 練習問題2", dayOffset: 1, labels: ["Math", "Class"], steps: ProblemSteps, estimatedHours: 1 },
-  { name: "🐧? ステップ🏃‍♂️", dayOffset: 2, labels: ["Math", "Ex"], steps: ProblemSteps, estimatedHours: 1.5 },
-  { name: "🐧? ステップ🙇‍♂️", dayOffset: 3, labels: ["Math", "Ex"], steps: ProblemSteps, estimatedHours: 1 },
-  { name: "🐧? 反ステップ🧗‍♂️", dayOffset: 4, labels: ["Math", "Ex"], steps: ProblemSteps, estimatedHours: 2 },
+const make_summary_tasks_ex = (emoji: string, subject: string): WeeklyTaskList => [
+  // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  { name: `${emoji}? 基本問題1`, dayOffset: 0, labels: [subject, "Class"], steps: ProblemSteps, estimatedHours: 2 },
+  { name: `${emoji}? 練習問題2`, dayOffset: 1, labels: [subject, "Class"], steps: ProblemSteps, estimatedHours: 1 },
+  { name: `${emoji}? ステップ🏃‍♂️`, dayOffset: 2, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 1.5 },
+  { name: `${emoji}? ステップ🙇‍♂️`, dayOffset: 3, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 1 },
+  { name: `${emoji}? 反ステップ🧗‍♂️`, dayOffset: 4, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 2 },
 ];
 
-// prettier-ignore
 const make_weekly_tasks = (
-  subject_emoji: string,
-  subject_code: string
-): WeeklyTaskList => {
-  return [
+  emoji: string,
+  subject: string
+): WeeklyTaskList => [
     // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-    { name: `${subject_emoji}? 第回1`, dayOffset: 0, labels: [subject_code, "Class"], estimatedHours: 2, },
-    { name: `${subject_emoji}? 要点チェック2`, dayOffset: 1, labels: [subject_code, "Class"], steps: ProblemSteps, estimatedHours: 1, },
-    { name: `${subject_emoji}? まとめてみよう3`, dayOffset: 2, labels: [subject_code, "Ex"], steps: ProblemSteps, estimatedHours: 1.5, },
-    { name: `${subject_emoji}? 基本問題4`, dayOffset: 3, labels: [subject_code, "Ex"], steps: ProblemSteps, estimatedHours: 1, },
-    { name: `${subject_emoji}? 練習問題5`, dayOffset: 4, labels: [subject_code, "Ex"], steps: ProblemSteps, estimatedHours: 2, },
-    { name: `${subject_emoji}? 発展問題6`, dayOffset: 5, labels: [subject_code, "Ex"], steps: ProblemSteps, estimatedHours: 2, },
+    { name: `${emoji}? 第回1`, dayOffset: 0, labels: [subject, "Class"], estimatedHours: 2, },
+    { name: `${emoji}? 要点チェック2`, dayOffset: 1, labels: [subject, "Class"], steps: ProblemSteps, estimatedHours: 1, },
+    { name: `${emoji}? まとめてみよう3`, dayOffset: 2, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 1.5, },
+    { name: `${emoji}? 基本問題4`, dayOffset: 3, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 1, },
+    { name: `${emoji}? 練習問題5`, dayOffset: 4, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 2, },
+    { name: `${emoji}? 発展問題6`, dayOffset: 5, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 2, },
   ];
-};
 
-// prettier-ignore
 const make_summary_tasks = (
-  subject_emoji: string,
-  subject_code: string
-): WeeklyTaskList => {
-  return [
+  emoji: string,
+  subject: string
+): WeeklyTaskList => [
     // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-    { name: `${subject_emoji}? 要点チェック1`, dayOffset: 0, labels: [subject_code, "Class"], estimatedHours: 2, },
-    { name: `${subject_emoji}? 練習問題2`, dayOffset: 1, labels: [subject_code, "Class"], steps: ProblemSteps, estimatedHours: 1, },
-    { name: `${subject_emoji}? 練習問題3`, dayOffset: 2, labels: [subject_code, "Ex"], steps: ProblemSteps, estimatedHours: 1.5, },
-    { name: `${subject_emoji}? 応用問題4`, dayOffset: 3, labels: [subject_code, "Ex"], steps: ProblemSteps, estimatedHours: 1, },
-    { name: `${subject_emoji}? チャレンジ問題5`, dayOffset: 4, labels: [subject_code, "Ex"], steps: ProblemSteps, estimatedHours: 2, },
+    { name: `${emoji}? 要点チェック1`, dayOffset: 0, labels: [subject, "Class"], estimatedHours: 2, },
+    { name: `${emoji}? 練習問題2`, dayOffset: 1, labels: [subject, "Class"], steps: ProblemSteps, estimatedHours: 1, },
+    { name: `${emoji}? 練習問題3`, dayOffset: 2, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 1.5, },
+    { name: `${emoji}? 応用問題4`, dayOffset: 3, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 1, },
+    { name: `${emoji}? チャレンジ問題5`, dayOffset: 4, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 2, },
   ];
+
+type WorkRecord = Record<
+  string,
+  { WEEKLY: WeeklyTaskList; SUMMARY: WeeklyTaskList }
+>;
+
+// what is the type here, if the subjects are dynamic?
+const work: Record<string, WorkRecord> = {
+  Ilya: {
+    MATH: {
+      WEEKLY: make_weekly_tasks_ex("🐧", "Math"),
+      SUMMARY: make_summary_tasks_ex("🐧", "Math"),
+    },
+    SCIENCE: {
+      WEEKLY: make_weekly_tasks("🐊", "Sci"),
+      SUMMARY: make_summary_tasks("🐊", "Sci"),
+    },
+    SOCIAL: {
+      WEEKLY: make_weekly_tasks("🦅", "Soc"),
+      SUMMARY: make_summary_tasks("🦅", "Soc"),
+    },
+  },
+  Adam: {
+    MATH: {
+      WEEKLY: make_weekly_tasks_ex("🐳", "Math"),
+      SUMMARY: make_summary_tasks_ex("🐳", "Math"),
+    },
+    JAPANESE: {
+      WEEKLY: make_weekly_tasks_ex("🦁", "Jap"),
+      SUMMARY: make_summary_tasks_ex("🦁", "Jap"),
+    },
+    SCIENCE: {
+      WEEKLY: make_weekly_tasks("🦒", "Sci"),
+      SUMMARY: make_summary_tasks("🦒", "Sci"),
+    },
+    SOCIAL: {
+      WEEKLY: make_weekly_tasks("🐘", "Soc"),
+      SUMMARY: make_summary_tasks("🐘", "Soc"),
+    },
+  },
 };
-
-const SCIENCE_WEEKLY_TASKS: WeeklyTaskList = make_weekly_tasks("🐊", "Sci");
-const SCIENCE_SUMMARY_TASKS: WeeklyTaskList = make_summary_tasks("🐊", "Sci");
-
-const SOCIAL_WEEKLY_TASKS: WeeklyTaskList = make_weekly_tasks("🦅", "Soc");
-const SOCIAL_SUMMARY_TASKS: WeeklyTaskList = make_summary_tasks("🦅", "Soc");
 
 function generateTrancheSchedule({
   firstSaturday,
@@ -188,7 +218,7 @@ async function createTrancheSchedule(
           count: classNumber,
           rounds: 1,
           labels: task.labels,
-          steps: [],
+          steps: task.steps,
         },
       };
 
@@ -230,33 +260,40 @@ async function findListId(
   );
 
   if (!list) {
-    throw new Error(`Could not find list "${listName}" on board`);
+    console.log(`Lists on board ${boardId}:`, lists);
+    throw new Error(`Could not find list "${listName}" on board ${boardId}`);
   }
 
   return list.id;
 }
 
-async function main() {
+async function main(userName: "Ilya" | "Adam") {
   const trelloService = createTrelloService(dryRun);
 
   // Look up board and list IDs by name
-  const boardId = await findBoardId(trelloService, "Ilya's ZK");
-  const listId = await findListId(trelloService, boardId, "To Do");
+  const boardId = await findBoardId(trelloService, `${userName}'s ZK`);
+  const listId = await findListId(trelloService, boardId, ToDoListName);
 
   // Get current date
   const now = new Date();
   const currentYear = now.getFullYear();
 
-  // Create arrays by repeating weekly tasks (similar to Python's list * n)
+  const tasks = work[userName];
+
+  // create tranches array, walks through subjects listed in tasks, dynamically:
+  const tranches: TasksTranche[] = [];
+
+  for (const subjectKey of Object.keys(tasks) as (keyof WorkRecord)[]) {
+    const subject = tasks[subjectKey];
+
+    // Create arrays by repeating weekly tasks (similar to Python's list * n)
+    tranches.push([...Array(4).fill(subject.WEEKLY), subject.SUMMARY]);
+  }
 
   try {
-    for (const tranche of [
-      [...Array(4).fill(MATH_WEEKLY_TASKS), MATH_SUMMARY_TASKS],
-      [...Array(4).fill(SCIENCE_WEEKLY_TASKS), SCIENCE_SUMMARY_TASKS],
-      [...Array(4).fill(SOCIAL_WEEKLY_TASKS), SOCIAL_SUMMARY_TASKS],
-    ]) {
+    for (const tranche of tranches) {
       await createTrancheSchedule(
-        "ilyalevy",
+        `${userName.toLowerCase()}levy`,
         tranche,
         startingClassNumber,
         currentYear,
@@ -275,7 +312,16 @@ async function main() {
 }
 
 if (require.main === module) {
-  main();
+
+  const args = process.argv.slice(2);
+  const childName = args[0];
+
+  if (childName !== "Ilya" && childName !== "Adam") {
+    console.error("Invalid child name. Must be 'Ilya' or 'Adam'");
+    process.exit(1);
+  }
+
+  main(childName);
 }
 
 export { createTrancheSchedule, WeeklyTask };
