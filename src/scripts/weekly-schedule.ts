@@ -40,69 +40,87 @@ const buildWeeklyTasks = (
   subject: string,
   tasks: {
     jp: string;
-    day: number;
     label: string;
     hours: number;
-    steps?: boolean;
+    single_step?: boolean;
   }[],
 ): WeeklyTaskList =>
-  tasks.map(({ jp, day, label, hours, steps }, i) => ({
-    name: `${emoji}? ${jp}${i + 1}`,
+  tasks.map(({ jp, label, hours, single_step }, day) => ({
+    name: `${emoji}? ${jp}${day + 1}`,
     dayOffset: day,
     labels: [subject, label],
-    ...(steps && { steps: ProblemSteps }),
+    ...(!single_step && { steps: ProblemSteps }),
     estimatedHours: hours,
   }));
 
-const make_weekly_tasks_math = (emoji: string): WeeklyTaskList =>
+const make_weekly_tasks_math_4th_grade = (emoji: string): WeeklyTaskList =>
   buildWeeklyTasks(emoji, "Math", [
-    { jp: "第回", day: 0, label: "Class", hours: 2 },
-    { jp: "🔶基本問題", day: 1, label: "Class", hours: 1, steps: true },
-    { jp: "🔷練習問題", day: 2, label: "Class", hours: 1.5, steps: true },
-    { jp: "反復問題(基本)", day: 3, label: "Ex", hours: 1, steps: true },
-    { jp: "反復問題(練習)", day: 4, label: "Ex", hours: 2, steps: true },
-    { jp: "トレーニング", day: 5, label: "Ex", hours: 1.5, steps: true },
-    { jp: "実戦演習", day: 6, label: "Ex", hours: 1.5, steps: true },
+    { jp: "第回", label: "Class", hours: 2, single_step: true },
+    { jp: "🔶基本問題", label: "Class", hours: 1 },
+    { jp: "🔷練習問題", label: "Class", hours: 1.5 },
+    //
+    { jp: "反復問題(基本)", label: "Ex", hours: 1 },
+    { jp: "反復問題(練習)", label: "Ex", hours: 2 },
+    { jp: "トレーニング", label: "Ex", hours: 1.5 },
+    { jp: "実戦演習", label: "Ex", hours: 1.5 },
+  ]);
+
+const make_weekly_tasks_math_6th_grade = (emoji: string): WeeklyTaskList =>
+  buildWeeklyTasks(emoji, "Math", [
+    { jp: "🔹重要問題チェック", label: "Class", hours: 3.5, single_step: true },
+    { jp: "🅿️重要問題プラス", label: "Class", hours: 1 },
+    { jp: "🔶発展学習", label: "Class", hours: 1 },
+    { jp: "🔷ステップアップ演習", label: "Class", hours: 2 },
+    //
+    { jp: "ステップ🏃‍♂️", label: "Ex", hours: 1.5 },
+    { jp: "ステップ🙇‍♂️", label: "Ex", hours: 1 },
+    { jp: "ステップ🧗‍♂️", label: "Ex", hours: 1 },
   ]);
 
 const make_summary_tasks_math = (emoji: string): WeeklyTaskList =>
   buildWeeklyTasks(emoji, "Math", [
-    { jp: "🟠基本問題", day: 0, label: "Class", hours: 2, steps: true },
-    { jp: "🔵練習問題", day: 1, label: "Class", hours: 1, steps: true },
-    { jp: "🏃‍♂️ステップ1", day: 2, label: "Ex", hours: 1.5, steps: true },
-    { jp: "🙇‍♂️ステップ2", day: 3, label: "Ex", hours: 1, steps: true },
-    { jp: "🧗‍♂️ステップ3", day: 4, label: "Ex", hours: 2, steps: true },
+    { jp: "🟠基本問題", label: "Class", hours: 2, single_step: true },
+    { jp: "🔵練習問題", label: "Class", hours: 1 },
+    //
+    { jp: "ステップ🏃‍♂️", label: "Ex", hours: 1.5 },
+    { jp: "ステップ🙇‍♂️", label: "Ex", hours: 1 },
+    { jp: "ステップ🧗‍♂️", label: "Ex", hours: 2 },
   ]);
 
 const make_weekly_tasks_jap = (emoji: string): WeeklyTaskList =>
   buildWeeklyTasks(emoji, "Jap", [
-    { jp: "第回", day: 0, label: "Class", hours: 1 },
-    { jp: "基本問題", day: 1, label: "Class", hours: 2, steps: true },
-    { jp: "発展問題", day: 2, label: "Class", hours: 2, steps: true },
-    { jp: "演習問題", day: 3, label: "Ex", hours: 2, steps: true },
+    { jp: "第回", label: "Class", hours: 1, single_step: true },
+    { jp: "基本問題", label: "Class", hours: 2 },
+    { jp: "発展問題", label: "Class", hours: 2 },
+    //
+    { jp: "演習問題", label: "Ex", hours: 2 },
   ]);
 
 const make_summary_tasks_jap = (emoji: string): WeeklyTaskList =>
   buildWeeklyTasks(emoji, "Jap", [
-    { jp: "基本問題", day: 0, label: "Class", hours: 2, steps: true },
-    { jp: "演習問題", day: 1, label: "Ex", hours: 3, steps: true },
+    { jp: "基本問題", label: "Class", hours: 2, single_step: true },
+    //
+    { jp: "演習問題", label: "Ex", hours: 3 },
   ]);
 
 const WEEKLY_TEMPLATE_GRADE4 = [
-  { jp: "第回", day: 0, label: "Class", hours: 2 },
-  { jp: "要点チェック", day: 1, label: "Class", hours: 1, steps: true },
-  { jp: "まとめてみよう", day: 2, label: "Ex", hours: 1.5, steps: true },
-  { jp: "練習問題", day: 3, label: "Ex", hours: 2, steps: true },
-  { jp: "発展問題", day: 4, label: "Ex", hours: 2, steps: true },
+  { jp: "第回", label: "Class", hours: 2, single_step: true },
+  { jp: "要点チェック", label: "Class", hours: 1 },
+  //
+  { jp: "まとめてみよう", label: "Ex", hours: 1.5 },
+  //
+  { jp: "練習問題", label: "Ex", hours: 2 },
+  { jp: "発展問題", label: "Ex", hours: 2 },
 ];
 
 const WEEKLY_TEMPLATE_DEFAULT = [
-  { jp: "第回", day: 0, label: "Class", hours: 2 },
-  { jp: "要点チェック", day: 1, label: "Class", hours: 1, steps: true },
-  { jp: "まとめてみよう", day: 2, label: "Ex", hours: 1.5, steps: true },
-  { jp: "基本問題", day: 3, label: "Ex", hours: 1, steps: true },
-  { jp: "練習問題", day: 4, label: "Ex", hours: 2, steps: true },
-  { jp: "発展問題", day: 5, label: "Ex", hours: 2, steps: true },
+  { jp: "第回", label: "Class", hours: 2, single_step: true },
+  { jp: "要点チェック", label: "Class", hours: 1 },
+  //
+  { jp: "まとめてみよう", label: "Ex", hours: 1.5 },
+  { jp: "基本問題", label: "Ex", hours: 1 },
+  { jp: "練習問題", label: "Ex", hours: 2 },
+  { jp: "発展問題", label: "Ex", hours: 2 },
 ];
 
 const make_weekly_tasks = (
@@ -118,11 +136,11 @@ const make_weekly_tasks = (
 
 const make_summary_tasks = (emoji: string, subject: string): WeeklyTaskList =>
   buildWeeklyTasks(emoji, subject, [
-    { jp: "要点チェック", day: 0, label: "Class", hours: 2 },
-    { jp: "練習問題", day: 1, label: "Class", hours: 1, steps: true },
-    { jp: "練習問題", day: 2, label: "Ex", hours: 1.5, steps: true },
-    { jp: "応用問題", day: 3, label: "Ex", hours: 1, steps: true },
-    { jp: "チャレンジ問題", day: 4, label: "Ex", hours: 2, steps: true },
+    { jp: "要点チェック", label: "Class", hours: 2 },
+    { jp: "練習問題", label: "Class", hours: 1 },
+    { jp: "練習問題", label: "Ex", hours: 1.5 },
+    { jp: "応用問題", label: "Ex", hours: 1 },
+    { jp: "チャレンジ問題", label: "Ex", hours: 2 },
   ]);
 
 type WorkRecord = Record<
@@ -134,7 +152,7 @@ type WorkRecord = Record<
 const work: Record<string, WorkRecord> = {
   Ilya: {
     MATH: {
-      WEEKLY: make_weekly_tasks_math("🦈"),
+      WEEKLY: make_weekly_tasks_math_6th_grade("🦈"),
       SUMMARY: make_summary_tasks_math("🦈"),
     },
     // JAPANESE: {
@@ -152,7 +170,7 @@ const work: Record<string, WorkRecord> = {
   },
   Adam: {
     MATH: {
-      WEEKLY: make_weekly_tasks_math("🐳"),
+      WEEKLY: make_weekly_tasks_math_4th_grade("🐳"),
       SUMMARY: make_summary_tasks_math("🐳"),
     },
     JAPANESE: {
