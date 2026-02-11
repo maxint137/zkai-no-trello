@@ -35,54 +35,95 @@ const kickOffDate = new Date(2026, 2 - 1, 8); // month is 0-indexed
 const startingClassNumber = 1;
 const dryRun = false;
 
-// prettier-ignore
-const make_weekly_tasks_ex = (emoji: string, subject: string): WeeklyTaskList => [
-  // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  { name: `${emoji}? 第回1`, dayOffset: 0, labels: [subject, "Class"], estimatedHours: 2 },
-  { name: `${emoji}? 基本問題2`, dayOffset: 1, labels: [subject, "Class"], steps: ProblemSteps, estimatedHours: 1 },
-  { name: `${emoji}? 練習問題3`, dayOffset: 2, labels: [subject, "Class"], steps: ProblemSteps, estimatedHours: 1.5 },
-  { name: `${emoji}? 反復問題(基本)4`, dayOffset: 3, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 1 },
-  { name: `${emoji}? 反復問題(練習)5`, dayOffset: 4, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 2 },
-  { name: `${emoji}? トレーニング6`, dayOffset: 5, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 1.5 },
-  { name: `${emoji}? 実戦演習7`, dayOffset: 6, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 1.5 },
+const buildWeeklyTasks = (
+  emoji: string,
+  subject: string,
+  tasks: {
+    jp: string;
+    day: number;
+    label: string;
+    hours: number;
+    steps?: boolean;
+  }[],
+): WeeklyTaskList =>
+  tasks.map(({ jp, day, label, hours, steps }, i) => ({
+    name: `${emoji}? ${jp}${i + 1}`,
+    dayOffset: day,
+    labels: [subject, label],
+    ...(steps && { steps: ProblemSteps }),
+    estimatedHours: hours,
+  }));
+
+const make_weekly_tasks_math = (emoji: string): WeeklyTaskList =>
+  buildWeeklyTasks(emoji, "Math", [
+    { jp: "第回", day: 0, label: "Class", hours: 2 },
+    { jp: "🔶基本問題", day: 1, label: "Class", hours: 1, steps: true },
+    { jp: "🔷練習問題", day: 2, label: "Class", hours: 1.5, steps: true },
+    { jp: "反復問題(基本)", day: 3, label: "Ex", hours: 1, steps: true },
+    { jp: "反復問題(練習)", day: 4, label: "Ex", hours: 2, steps: true },
+    { jp: "トレーニング", day: 5, label: "Ex", hours: 1.5, steps: true },
+    { jp: "実戦演習", day: 6, label: "Ex", hours: 1.5, steps: true },
+  ]);
+
+const make_summary_tasks_math = (emoji: string): WeeklyTaskList =>
+  buildWeeklyTasks(emoji, "Math", [
+    { jp: "🟠基本問題", day: 0, label: "Class", hours: 2, steps: true },
+    { jp: "🔵練習問題", day: 1, label: "Class", hours: 1, steps: true },
+    { jp: "🏃‍♂️ステップ1", day: 2, label: "Ex", hours: 1.5, steps: true },
+    { jp: "🙇‍♂️ステップ2", day: 3, label: "Ex", hours: 1, steps: true },
+    { jp: "🧗‍♂️ステップ3", day: 4, label: "Ex", hours: 2, steps: true },
+  ]);
+
+const make_weekly_tasks_jap = (emoji: string): WeeklyTaskList =>
+  buildWeeklyTasks(emoji, "Jap", [
+    { jp: "第回", day: 0, label: "Class", hours: 1 },
+    { jp: "基本問題", day: 1, label: "Class", hours: 2, steps: true },
+    { jp: "発展問題", day: 2, label: "Class", hours: 2, steps: true },
+    { jp: "演習問題", day: 3, label: "Ex", hours: 2, steps: true },
+  ]);
+
+const make_summary_tasks_jap = (emoji: string): WeeklyTaskList =>
+  buildWeeklyTasks(emoji, "Jap", [
+    { jp: "基本問題", day: 0, label: "Class", hours: 2, steps: true },
+    { jp: "演習問題", day: 1, label: "Ex", hours: 3, steps: true },
+  ]);
+
+const WEEKLY_TEMPLATE_GRADE4 = [
+  { jp: "第回", day: 0, label: "Class", hours: 2 },
+  { jp: "要点チェック", day: 1, label: "Class", hours: 1, steps: true },
+  { jp: "まとめてみよう", day: 2, label: "Ex", hours: 1.5, steps: true },
+  { jp: "練習問題", day: 3, label: "Ex", hours: 2, steps: true },
+  { jp: "発展問題", day: 4, label: "Ex", hours: 2, steps: true },
 ];
 
-// prettier-ignore
-const make_summary_tasks_ex = (emoji: string, subject: string): WeeklyTaskList => [
-  // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  { name: `${emoji}? 基本問題1`, dayOffset: 0, labels: [subject, "Class"], steps: ProblemSteps, estimatedHours: 2 },
-  { name: `${emoji}? 練習問題2`, dayOffset: 1, labels: [subject, "Class"], steps: ProblemSteps, estimatedHours: 1 },
-  { name: `${emoji}? ステップ🏃‍♂️`, dayOffset: 2, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 1.5 },
-  { name: `${emoji}? ステップ🙇‍♂️`, dayOffset: 3, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 1 },
-  { name: `${emoji}? 反ステップ🧗‍♂️`, dayOffset: 4, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 2 },
+const WEEKLY_TEMPLATE_DEFAULT = [
+  { jp: "第回", day: 0, label: "Class", hours: 2 },
+  { jp: "要点チェック", day: 1, label: "Class", hours: 1, steps: true },
+  { jp: "まとめてみよう", day: 2, label: "Ex", hours: 1.5, steps: true },
+  { jp: "基本問題", day: 3, label: "Ex", hours: 1, steps: true },
+  { jp: "練習問題", day: 4, label: "Ex", hours: 2, steps: true },
+  { jp: "発展問題", day: 5, label: "Ex", hours: 2, steps: true },
 ];
 
-// prettier-ignore
 const make_weekly_tasks = (
   emoji: string,
-  subject: string
-): WeeklyTaskList => [
-    // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-    { name: `${emoji}? 第回1`, dayOffset: 0, labels: [subject, "Class"], estimatedHours: 2, },
-    { name: `${emoji}? 要点チェック2`, dayOffset: 1, labels: [subject, "Class"], steps: ProblemSteps, estimatedHours: 1, },
-    { name: `${emoji}? まとめてみよう3`, dayOffset: 2, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 1.5, },
-    { name: `${emoji}? 基本問題4`, dayOffset: 3, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 1, },
-    { name: `${emoji}? 練習問題5`, dayOffset: 4, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 2, },
-    { name: `${emoji}? 発展問題6`, dayOffset: 5, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 2, },
-  ];
+  subject: string,
+  grade4: boolean = false,
+): WeeklyTaskList =>
+  buildWeeklyTasks(
+    emoji,
+    subject,
+    grade4 ? WEEKLY_TEMPLATE_GRADE4 : WEEKLY_TEMPLATE_DEFAULT,
+  );
 
-// prettier-ignore
-const make_summary_tasks = (
-  emoji: string,
-  subject: string
-): WeeklyTaskList => [
-    // dayOffset: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-    { name: `${emoji}? 要点チェック1`, dayOffset: 0, labels: [subject, "Class"], estimatedHours: 2, },
-    { name: `${emoji}? 練習問題2`, dayOffset: 1, labels: [subject, "Class"], steps: ProblemSteps, estimatedHours: 1, },
-    { name: `${emoji}? 練習問題3`, dayOffset: 2, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 1.5, },
-    { name: `${emoji}? 応用問題4`, dayOffset: 3, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 1, },
-    { name: `${emoji}? チャレンジ問題5`, dayOffset: 4, labels: [subject, "Ex"], steps: ProblemSteps, estimatedHours: 2, },
-  ];
+const make_summary_tasks = (emoji: string, subject: string): WeeklyTaskList =>
+  buildWeeklyTasks(emoji, subject, [
+    { jp: "要点チェック", day: 0, label: "Class", hours: 2 },
+    { jp: "練習問題", day: 1, label: "Class", hours: 1, steps: true },
+    { jp: "練習問題", day: 2, label: "Ex", hours: 1.5, steps: true },
+    { jp: "応用問題", day: 3, label: "Ex", hours: 1, steps: true },
+    { jp: "チャレンジ問題", day: 4, label: "Ex", hours: 2, steps: true },
+  ]);
 
 type WorkRecord = Record<
   string,
@@ -93,13 +134,13 @@ type WorkRecord = Record<
 const work: Record<string, WorkRecord> = {
   Ilya: {
     MATH: {
-      WEEKLY: make_weekly_tasks_ex("🦈", "Math"),
-      SUMMARY: make_summary_tasks_ex("🦈", "Math"),
+      WEEKLY: make_weekly_tasks_math("🦈"),
+      SUMMARY: make_summary_tasks_math("🦈"),
     },
-    JAPANESE: {
-      WEEKLY: make_weekly_tasks_ex("🦤", "Jap"),
-      SUMMARY: make_summary_tasks_ex("🦤", "Jap"),
-    },
+    // JAPANESE: {
+    //   WEEKLY: make_weekly_tasks_ex("🦤", "Jap"),
+    //   SUMMARY: make_summary_tasks_ex("🦤", "Jap"),
+    // },
     SCIENCE: {
       WEEKLY: make_weekly_tasks("🐯", "Sci"),
       SUMMARY: make_summary_tasks("🐯", "Sci"),
@@ -111,19 +152,19 @@ const work: Record<string, WorkRecord> = {
   },
   Adam: {
     MATH: {
-      WEEKLY: make_weekly_tasks_ex("🐳", "Math"),
-      SUMMARY: make_summary_tasks_ex("🐳", "Math"),
+      WEEKLY: make_weekly_tasks_math("🐳"),
+      SUMMARY: make_summary_tasks_math("🐳"),
     },
     JAPANESE: {
-      WEEKLY: make_weekly_tasks_ex("🦁", "Jap"),
-      SUMMARY: make_summary_tasks_ex("🦁", "Jap"),
+      WEEKLY: make_weekly_tasks_jap("🦁"),
+      SUMMARY: make_summary_tasks_jap("🦁"),
     },
     SCIENCE: {
-      WEEKLY: make_weekly_tasks("🦒", "Sci"),
+      WEEKLY: make_weekly_tasks("🦒", "Sci", true),
       SUMMARY: make_summary_tasks("🦒", "Sci"),
     },
     SOCIAL: {
-      WEEKLY: make_weekly_tasks("🐘", "Soc"),
+      WEEKLY: make_weekly_tasks("🐘", "Soc", true),
       SUMMARY: make_summary_tasks("🐘", "Soc"),
     },
   },
