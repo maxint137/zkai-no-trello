@@ -77,6 +77,26 @@ const make_weekly_tasks_math_6th_grade = (emoji: string): WeeklyTaskList =>
     { jp: "ステップ🧗‍♂️", label: "Ex", hours: 1 },
   ]);
 
+const make_weekly_tasks_science_6th_grade = (emoji: string): WeeklyTaskList =>
+  buildWeeklyTasks(emoji, "Sci", [
+    { jp: "第回", label: "Class", hours: 2, single_step: true },
+    { jp: "要点チェック", label: "Class", hours: 1 },
+    //
+    { jp: "基本問題", label: "Ex", hours: 1 },
+    { jp: "練習問題", label: "Ex", hours: 2 },
+    { jp: "発展問題", label: "Ex", hours: 2 },
+  ]);
+
+const make_weekly_tasks_social_6th_grade = (emoji: string): WeeklyTaskList =>
+  buildWeeklyTasks(emoji, "Soc", [
+    { jp: "第回", label: "Class", hours: 2, single_step: true },
+    { jp: "要点チェック", label: "Class", hours: 1 },
+    //
+    { jp: "まとめてみよう", label: "Ex", hours: 1.5 },
+    { jp: "練習問題", label: "Ex", hours: 2 },
+    { jp: "発展問題", label: "Ex", hours: 2 },
+  ]);
+
 const make_summary_tasks_math = (emoji: string): WeeklyTaskList =>
   buildWeeklyTasks(emoji, "Math", [
     { jp: "🟠基本問題", label: "Class", hours: 2, single_step: true },
@@ -113,27 +133,12 @@ const WEEKLY_TEMPLATE_GRADE4 = [
   { jp: "発展問題", label: "Ex", hours: 2 },
 ];
 
-const WEEKLY_TEMPLATE_DEFAULT = [
-  { jp: "第回", label: "Class", hours: 2, single_step: true },
-  { jp: "要点チェック", label: "Class", hours: 1 },
-  //
-  { jp: "まとめてみよう", label: "Ex", hours: 1.5 },
-  { jp: "基本問題", label: "Ex", hours: 1 },
-  { jp: "練習問題", label: "Ex", hours: 2 },
-  { jp: "発展問題", label: "Ex", hours: 2 },
-];
-
-const make_weekly_tasks = (
+const make_weekly_tasks_4th_grade = (
   emoji: string,
   subject: string,
-  grade4: boolean = false,
-): WeeklyTaskList =>
-  buildWeeklyTasks(
-    emoji,
-    subject,
-    grade4 ? WEEKLY_TEMPLATE_GRADE4 : WEEKLY_TEMPLATE_DEFAULT,
-  );
+): WeeklyTaskList => buildWeeklyTasks(emoji, subject, WEEKLY_TEMPLATE_GRADE4);
 
+// these are somehow are common across the subjects and grades
 const make_summary_tasks = (emoji: string, subject: string): WeeklyTaskList =>
   buildWeeklyTasks(emoji, subject, [
     { jp: "要点チェック", label: "Class", hours: 2 },
@@ -160,11 +165,11 @@ const work: Record<string, WorkRecord> = {
     //   SUMMARY: make_summary_tasks_ex("🦤", "Jap"),
     // },
     SCIENCE: {
-      WEEKLY: make_weekly_tasks("🐯", "Sci"),
+      WEEKLY: make_weekly_tasks_science_6th_grade("🐯"),
       SUMMARY: make_summary_tasks("🐯", "Sci"),
     },
     SOCIAL: {
-      WEEKLY: make_weekly_tasks("🦘", "Soc"),
+      WEEKLY: make_weekly_tasks_social_6th_grade("🦘"),
       SUMMARY: make_summary_tasks("🦘", "Soc"),
     },
   },
@@ -178,11 +183,11 @@ const work: Record<string, WorkRecord> = {
       SUMMARY: make_summary_tasks_jap("🦁"),
     },
     SCIENCE: {
-      WEEKLY: make_weekly_tasks("🦒", "Sci", true),
+      WEEKLY: make_weekly_tasks_4th_grade("🦒", "Sci"),
       SUMMARY: make_summary_tasks("🦒", "Sci"),
     },
     SOCIAL: {
-      WEEKLY: make_weekly_tasks("🐘", "Soc", true),
+      WEEKLY: make_weekly_tasks_4th_grade("🐘", "Soc"),
       SUMMARY: make_summary_tasks("🐘", "Soc"),
     },
   },
