@@ -4,8 +4,8 @@
   "description": "Generate work-plan for the kids",
   "main": "src/index.ts",
   "scripts": {
-    "ilya": "npx tsx src/scripts/weekly-schedule.ts Ilya",
-    "adam": "npx tsx src/scripts/weekly-schedule.ts Adam",
+    "ilya": "npx tsx src/scripts/weekly-schedule.ts Ilya | tee ilya.log",
+    "adam": "npx tsx src/scripts/weekly-schedule.ts Adam | tee adam.log",
     "build": "tsc",
     "lint": "eslint src/**/*.ts",
     "test": "jest"

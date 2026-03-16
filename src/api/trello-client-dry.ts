@@ -27,7 +27,7 @@ export function createDryRunApi(debugLog: boolean = true) {
     endpoint: string,
     body: any = null
   ): Promise<any> {
-    const log = debugLog ? console.log : () => {};
+    const log = debugLog ? console.log : () => { };
     log(
       `🔸 DryRun API Call: ${endpoint}`,
       body ? `\nBody: ${JSON.stringify(body, null, 2)}` : ""
@@ -72,7 +72,7 @@ export function createDryRunApi(debugLog: boolean = true) {
     if (endpoint.startsWith("boards/") && endpoint.endsWith("/lists")) {
       const boardId = endpoint.split("/")[1];
       return [
-        { id: generateId("list"), name: "To Do" },
+        { id: generateId("list"), name: "To Do 🌞" },
         { id: generateId("list"), name: "Doing" },
         { id: generateId("list"), name: "Done" },
       ];
@@ -86,6 +86,8 @@ export function createDryRunApi(debugLog: boolean = true) {
         { id: generateId("label"), name: "Sci" },
         { id: generateId("label"), name: "Class" },
         { id: generateId("label"), name: "Drill" },
+        { id: generateId("label"), name: "🧮" },
+        { id: generateId("label"), name: "🈚️" },
         { id: generateId("label"), name: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
         { id: generateId("label"), name: "🍿" },
         { id: generateId("label"), name: "Ex" },
