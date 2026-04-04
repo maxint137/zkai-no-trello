@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>□ Missing Number Drill</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap');
+  :root {
+    --bg:#0e0e10;--surface:#18181c;--surface2:#222228;
+    --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+    --text:#f0efe8;--muted:#8a8a96;--hint:#555562;
+    --blue:#5b8ff9;--blue-dim:rgba(91,143,249,0.12);
+    --green:#4ecb8a;--green-dim:rgba(78,203,138,0.12);
+    --red:#f26b5b;--red-dim:rgba(242,107,91,0.12);
+    --amber:#f5a623;--amber-dim:rgba(245,166,35,0.10);
+    --purple:#a78bfa;--purple-dim:rgba(167,139,250,0.12);
+    --radius:10px;--radius-lg:16px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem}
+  .app{width:100%;max-width:580px}
+
+  /* header */
+  .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+  .header-left .title{font-family:'DM Serif Display',serif;font-size:22px;letter-spacing:-0.01em}
+  .header-left .title span{color:var(--blue)}
+  .header-left .subtitle{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px}
+  .header-right{display:flex;align-items:center;gap:10px}
+
+  /* streak badge */
+  .streak{display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--amber);background:var(--amber-dim);border:0.5px solid rgba(245,166,35,0.25);border-radius:20px;padding:4px 10px;transition:all 0.3s}
+  .streak.hidden{opacity:0;pointer-events:none}
+  .streak-fire{font-size:14px}
+
+  /* stats link */
+  .stats-btn{font-size:11px;color:var(--hint);background:none;border:none;cursor:pointer;font-family:'DM Mono',monospace;padding:4px 8px;border-radius:6px;transition:color 0.15s}
+  .stats-btn:hover{color:var(--muted)}
+
+  /* tabs */
+  .tabs{display:flex;gap:5px;margin-bottom:1.25rem;background:var(--surface);border-radius:var(--radius);padding:4px;border:0.5px solid var(--border)}
+  .tab{flex:1;padding:7px 6px;border-radius:7px;border:none;background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.15s;text-align:center;line-height:1.3;position:relative}
+  .tab.active{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(91,143,249,0.3)}
+  .tab.active.lv4{background:var(--purple);box-shadow:0 2px 8px rgba(167,139,250,0.4)}
+  .tab:not(.active):hover{color:var(--text)}
+  .tab-pb{display:block;font-size:9px;opacity:0.6;margin-top:1px;font-family:'DM Mono',monospace}
+
+  /* stats row */
+  .stats-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;margin-bottom:1.25rem;align-items:center}
+  .stat-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:10px 14px;text-align:center}
+  .stat-n{font-size:20px;font-weight:500;font-family:'DM Mono',monospace}
+  .stat-l{font-size:10px;color:var(--muted);margin-top:1px}
+  .stat-card.ok .stat-n{color:var(--green)}
+  .stat-card.bad .stat-n{color:var(--red)}
+  .stat-card.pb .stat-n{color:var(--amber)}
+
+  /* level indicator badge (auto-adjust) */
+  .level-badge{font-size:10px;font-family:'DM Mono',monospace;padding:2px 7px;border-radius:10px;background:var(--blue-dim);color:var(--blue);border:0.5px solid rgba(91,143,249,0.3);margin-left:6px;vertical-align:middle}
+  .level-badge.lv4{background:var(--purple-dim);color:var(--purple);border-color:rgba(167,139,250,0.3)}
+
+  /* timer */
+  .timer-wrap{display:flex;align-items:center;justify-content:center}
+  .timer-ring{position:relative;width:60px;height:60px}
+  .timer-ring svg{transform:rotate(-90deg)}
+  .timer-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;font-weight:500;font-family:'DM Mono',monospace;color:var(--text)}
+
+  /* pips */
+  .pips{display:flex;gap:5px;margin-bottom:1rem;flex-wrap:wrap}
+  .pip{flex:1;height:3px;border-radius:2px;background:var(--surface2);transition:background 0.2s;min-width:16px}
+  .pip.ok{background:var(--green)}.pip.bad{background:var(--red)}.pip.retry{background:var(--amber)}.pip.cur{background:var(--blue)}.pip.cur.lv4{background:var(--purple)}
+
+  /* question card */
+  .qcard{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:2rem 1.5rem 1.75rem;margin-bottom:1rem;min-height:160px;display:flex;flex-direction:column;gap:14px;transition:border-color 0.2s}
+  .qcard.flash-ok{border-color:var(--green)}.qcard.flash-bad{border-color:var(--red)}
+  .qtype-tag{font-size:10px;font-family:'DM Mono',monospace;color:var(--hint);text-transform:uppercase;letter-spacing:.08em}
+  .retry-tag{display:inline-block;font-size:9px;font-family:'DM Mono',monospace;background:var(--amber-dim);color:var(--amber);border:0.5px solid rgba(245,166,35,0.3);border-radius:4px;padding:1px 5px;vertical-align:middle;margin-left:5px;letter-spacing:.04em}
+
+  /* equation */
+  .qtext{font-family:'DM Serif Display',serif;font-size:26px;color:var(--text);line-height:2.2;text-align:center;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0 6px}
+  .qtext .box{display:inline-block;width:58px;height:36px;border:2px solid var(--blue);border-radius:5px;vertical-align:middle;background:var(--blue-dim)}
+  .qtext .box.purple{border-color:var(--purple);background:var(--purple-dim)}
+  .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;font-size:0.55em;line-height:1.1;margin:0 2px;position:relative;top:-2px}
+  .frac .fn{border-bottom:1.5px solid currentColor;padding:0 2px 1px;text-align:center}
+  .frac .fd{padding:1px 2px 0;text-align:center}
+  .mixed{display:inline-flex;align-items:center;vertical-align:middle;gap:2px}
+  .mixed .whole{font-family:'DM Serif Display',serif;font-size:1em}
+
+  .hint-text{font-size:12px;color:var(--hint);font-style:italic;text-align:center;min-height:18px;font-family:'DM Sans',sans-serif}
+
+  /* input */
+  .input-area{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .input-row{display:flex;gap:8px;width:100%;max-width:380px}
+  .ans-input{flex:1;font-size:20px;font-family:'DM Mono',monospace;text-align:center;padding:11px 14px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface);color:var(--text);outline:none;transition:border-color 0.15s,background 0.15s}
+  .ans-input:focus{border-color:var(--blue)}
+  .ans-input.correct{border-color:var(--green);background:var(--green-dim)}
+  .ans-input.wrong{border-color:var(--red);background:var(--red-dim)}
+
+  /* buttons */
+  .btn{padding:11px 20px;border-radius:var(--radius);border:1px solid var(--border2);background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.15s;white-space:nowrap}
+  .btn:hover{background:var(--surface2)}
+  .btn-primary{background:var(--blue);border-color:transparent;color:#fff}
+  .btn-primary:hover{filter:brightness(1.1)}
+  .btn-purple{background:var(--purple);border-color:transparent;color:#fff}
+  .btn-purple:hover{filter:brightness(1.1)}
+
+  /* feedback */
+  .feedback{font-size:14px;font-weight:500;padding:8px 16px;border-radius:var(--radius);text-align:center}
+  .feedback.ok{background:var(--green-dim);color:var(--green);border:0.5px solid rgba(78,203,138,0.2)}
+  .feedback.bad{background:var(--red-dim);color:var(--red);border:0.5px solid rgba(242,107,91,0.2)}
+  .solution{font-size:13px;color:var(--muted);font-family:'DM Mono',monospace;text-align:center;padding:0 1rem;line-height:1.6}
+  .kbd-hint{font-size:11px;color:var(--hint);text-align:center;margin-top:2px;font-family:'DM Mono',monospace}
+
+  /* done screen */
+  .done-screen{text-align:center;padding:1.5rem 1rem}
+  .done-score{font-family:'DM Serif Display',serif;font-size:52px;color:var(--text);line-height:1;margin-bottom:6px}
+  .done-score span{color:var(--blue)}
+  .done-score.lv4 span{color:var(--purple)}
+  .done-msg{font-size:15px;color:var(--muted);margin-bottom:1.25rem}
+  .done-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem}
+
+  /* session history table */
+  .history-wrap{margin-top:1rem;text-align:left}
+  .history-title{font-size:11px;font-family:'DM Mono',monospace;color:var(--hint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+  .history-table{width:100%;border-collapse:collapse;font-size:12px}
+  .history-table th{font-size:10px;color:var(--hint);font-family:'DM Mono',monospace;font-weight:400;text-align:left;padding:4px 8px;border-bottom:0.5px solid var(--border)}
+  .history-table td{padding:5px 8px;border-bottom:0.5px solid rgba(255,255,255,0.04);color:var(--muted)}
+  .history-table td:first-child{color:var(--text);font-family:'DM Mono',monospace}
+  .history-table .ok-dot{color:var(--green)}.history-table .bad-dot{color:var(--red)}
+  .pct-bar{display:inline-block;height:4px;border-radius:2px;margin-left:6px;vertical-align:middle}
+
+  /* stats panel overlay */
+  .panel-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center;padding:1.5rem}
+  .panel-overlay.open{display:flex}
+  .panel{background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:1.5rem;width:100%;max-width:480px;max-height:80vh;overflow-y:auto}
+  .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+  .panel-title{font-family:'DM Serif Display',serif;font-size:18px}
+  .panel-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;line-height:1;padding:2px 6px}
+  .panel-close:hover{color:var(--text)}
+  .pb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem}
+  .pb-card{background:var(--surface2);border-radius:var(--radius);padding:10px;text-align:center}
+  .pb-n{font-size:22px;font-weight:500;font-family:'DM Mono',monospace;color:var(--amber)}
+  .pb-l{font-size:10px;color:var(--hint);margin-top:2px}
+  .section-label{font-size:10px;font-family:'DM Mono',monospace;color:var(--hint);text-transform:uppercase;letter-spacing:.06em;margin:1rem 0 6px}
+  .type-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.04)}
+  .type-name{font-size:12px;color:var(--text);flex:1;font-family:'DM Mono',monospace}
+  .type-pct{font-size:12px;font-weight:500;min-width:36px;text-align:right}
+  .type-bar-wrap{width:80px;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden}
+  .type-bar{height:4px;border-radius:2px}
+  .type-count{font-size:11px;color:var(--hint);min-width:28px;text-align:right}
+
+  /* level up toast */
+  .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:12px 20px;font-size:14px;font-weight:500;color:var(--text);transition:transform 0.4s cubic-bezier(.34,1.56,.64,1);z-index:200;white-space:nowrap;pointer-events:none}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+
+  .lv4-badge{display:inline-block;font-size:9px;font-family:'DM Mono',monospace;background:var(--purple-dim);color:var(--purple);border:0.5px solid rgba(167,139,250,0.3);border-radius:4px;padding:1px 5px;vertical-align:middle;margin-left:4px;letter-spacing:.04em}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-left">
+      <div class="title"><span>□</span> missing number drill</div>
+      <div class="subtitle">yotsuya exam prep</div>
+    </div>
+    <div class="header-right">
+      <div class="streak hidden" id="streakBadge"><span class="streak-fire">🔥</span><span id="streakNum">0</span></div>
+      <button class="stats-btn" onclick="openPanel()">history</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="setDiff(1)" id="tab1">Level 1<br><span class="tab-pb" id="pb1"></span></button>
+    <button class="tab" onclick="setDiff(2)" id="tab2">Level 2<br><span class="tab-pb" id="pb2"></span></button>
+    <button class="tab" onclick="setDiff(3)" id="tab3">Level 3<br><span class="tab-pb" id="pb3"></span></button>
+    <button class="tab lv4" onclick="setDiff(4)" id="tab4">Level 4<br><span class="tab-pb" id="pb4"></span></button>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card ok"><div class="stat-n" id="sCorrect">0</div><div class="stat-l">correct</div></div>
+    <div class="stat-card bad"><div class="stat-n" id="sWrong">0</div><div class="stat-l">wrong</div></div>
+    <div class="stat-card pb"><div class="stat-n" id="sPB">—</div><div class="stat-l">best time</div></div>
+    <div class="timer-wrap">
+      <div class="timer-ring">
+        <svg width="60" height="60" viewBox="0 0 60 60">
+          <circle cx="30" cy="30" r="25" fill="none" stroke-width="3" stroke="#222228"/>
+          <circle cx="30" cy="30" r="25" fill="none" stroke-width="3" stroke="#5b8ff9"
+            id="timerArc" stroke-dasharray="157.08" stroke-dashoffset="0" stroke-linecap="round"/>
+        </svg>
+        <div class="timer-num" id="timerNum">60</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pips" id="pips"></div>
+
+  <div class="qcard" id="qcard">
+    <div class="qtype-tag" id="qtype"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="hint-text" id="hintText"></div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-row">
+      <input class="ans-input" id="ansInput" type="text" placeholder="your answer"
+        onkeydown="if(event.key==='Enter')checkAnswer()" autocomplete="off" spellcheck="false">
+      <button class="btn btn-primary" id="checkBtn" onclick="checkAnswer()">Check</button>
+    </div>
+    <div id="feedback" style="display:none;width:100%;max-width:380px"></div>
+    <div class="solution" id="solution" style="display:none"></div>
+    <button class="btn" id="nextBtn" onclick="advanceQ()" style="display:none;margin-top:4px">Next →</button>
+    <div class="kbd-hint">Enter to check &nbsp;·&nbsp; hint after 20s &nbsp;·&nbsp; fractions: 3/4 or 1 3/4</div>
+  </div>
+</div>
+
+<!-- stats panel -->
+<div class="panel-overlay" id="panelOverlay" onclick="if(event.target===this)closePanel()">
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">history &amp; stats</div>
+      <button class="panel-close" onclick="closePanel()">×</button>
+    </div>
+    <div class="section-label">best time per level</div>
+    <div class="pb-grid">
+      <div class="pb-card"><div class="pb-n" id="panelPB1">—</div><div class="pb-l">level 1</div></div>
+      <div class="pb-card"><div class="pb-n" id="panelPB2">—</div><div class="pb-l">level 2</div></div>
+      <div class="pb-card"><div class="pb-n" id="panelPB3">—</div><div class="pb-l">level 3</div></div>
+      <div class="pb-card"><div class="pb-n" id="panelPB4">—</div><div class="pb-l">level 4</div></div>
+    </div>
+    <div class="section-label">time per session</div>
+    <div id="progressChart" style="margin-bottom:1rem"></div>
+    <div class="section-label">problem type accuracy (all time)</div>
+    <div id="typeStats"></div>
+    <div class="section-label" style="margin-top:1.25rem">recent sessions</div>
+    <div id="sessionList"></div>
+    <div style="margin-top:1rem;text-align:right">
+      <button class="btn" style="font-size:12px;padding:6px 12px;color:var(--red)" onclick="clearStats()">clear all stats</button>
+    </div>
+  </div>
+</div>
+
+<!-- level toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+const TOTAL=10;
+let diff=1,qIdx=0,nCorrect=0,nWrong=0;
+let timerSec=60,timerMax=60,timerInterval=null,hintTimer=null;
+let results=[],currentQ=null,answered=false;
+let streak=0,sessionLog=[],sessionStart=0; // per-question log: {type,correct,diff}
+let retryQueue=[]; // missed questions to replay at end
+
+/* ── storage (localStorage + Anthropic storage API if available) ── */
+const STORE_KEY='drill_stats_v1';
+let stats={pbs:[null,null,null,null],types:{},sessions:[]};
+
+function loadStats(){
+  try{
+    const s=localStorage.getItem(STORE_KEY);
+    if(s){stats=JSON.parse(s);}
+  }catch(e){}
+  if(!stats.pbs||stats.pbs.length!==4)stats.pbs=[null,null,null,null];
+  if(!stats.types)stats.types={};
+  if(!stats.sessions)stats.sessions=[];
+}
+
+function saveStats(){
+  try{localStorage.setItem(STORE_KEY,JSON.stringify(stats));}catch(e){}
+}
+
+function fmtTime(sec){
+  const m=Math.floor(sec/60),s=sec%60;
+  return m>0?m+'m '+String(s).padStart(2,'0')+'s':s+'s';
+}
+
+function recordSession(correct,log,elapsed){
+  const idx=diff-1;
+  // PB = best (lowest) time to finish; null means no PB yet
+  if(stats.pbs[idx]===null||elapsed<stats.pbs[idx]){stats.pbs[idx]=elapsed;}
+  // update type accuracy
+  log.forEach(({type,correct:c})=>{
+    if(!stats.types[type])stats.types[type]={ok:0,total:0};
+    stats.types[type].total++;
+    if(c)stats.types[type].ok++;
+  });
+  // store session summary
+  stats.sessions.unshift({date:new Date().toLocaleDateString(),diff,elapsed,mistakes:TOTAL+retryQueue.length-correct,total:TOTAL});
+  if(stats.sessions.length>30)stats.sessions=stats.sessions.slice(0,30);
+  saveStats();
+  updatePBDisplay();
+}
+
+function updatePBDisplay(){
+  for(let i=1;i<=4;i++){
+    const v=stats.pbs[i-1];
+    document.getElementById('pb'+i).textContent=v?v+'/10':'';
+  }
+  const pb=stats.pbs[diff-1];
+  document.getElementById('sPB').textContent=pb||'—';
+}
+
+function clearStats(){
+  if(!confirm('Clear all statistics?'))return;
+  stats={pbs:[null,null,null,null],types:{},sessions:[]};
+  saveStats();updatePBDisplay();renderPanel();
+}
+
+/* ── sound ── */
+const AudioCtx=window.AudioContext||window.webkitAudioContext;
+let audioCtx=null;
+function getCtx(){if(!audioCtx)audioCtx=new AudioCtx();return audioCtx;}
+
+function playCorrect(){
+  try{
+    const ctx=getCtx();
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.frequency.setValueAtTime(880,ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(1320,ctx.currentTime+0.1);
+    g.gain.setValueAtTime(0.18,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.35);
+    o.start();o.stop(ctx.currentTime+0.35);
+  }catch(e){}
+}
+
+function playWrong(){
+  try{
+    const ctx=getCtx();
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='sawtooth';
+    o.frequency.setValueAtTime(220,ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(110,ctx.currentTime+0.2);
+    g.gain.setValueAtTime(0.15,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.25);
+    o.start();o.stop(ctx.currentTime+0.25);
+  }catch(e){}
+}
+
+/* ── math helpers ── */
+function gcd(a,b){return b===0?Math.abs(a):gcd(b,a%b);}
+function simplify(n,d){if(d===0)return[0,1];let g=gcd(Math.abs(n),Math.abs(d));return[n/g,d/g];}
+function rnd(lo,hi){return Math.floor(Math.random()*(hi-lo+1))+lo;}
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+function fmt(v){
+  if(Number.isInteger(v))return String(v);
+  let r=Math.round(v*1000)/1000;
+  if(Math.abs(r-Math.round(r))<0.001)return String(Math.round(r));
+  return String(Math.round(r*100)/100);
+}
+
+/* ── fraction renderers ── */
+function fracHTML(n,d){return `<span class="frac"><span class="fn">${n}</span><span class="fd">${d}</span></span>`;}
+function mixedHTML(w,n,d){return `<span class="mixed"><span class="whole">${w}</span>${fracHTML(n,d)}</span>`;}
+function F(n,d){
+  let[sn,sd]=simplify(n,d);
+  if(sd===1)return String(sn);
+  if(sn>sd){let w=Math.floor(sn/sd),r=sn%sd;return r===0?String(w):mixedHTML(w,r,sd);}
+  return fracHTML(sn,sd);
+}
+function fstr(n,d){
+  let[sn,sd]=simplify(n,d);
+  if(sd===1)return String(sn);
+  if(sn>sd){let w=Math.floor(sn/sd),r=sn%sd;return r===0?String(w):`${w} ${r}/${sd}`;}
+  return `${sn}/${sd}`;
+}
+function BOX(){return `<span class="box"></span>`;}
+function PBOX(){return `<span class="box purple"></span>`;}
+
+/* ── answer parser ── */
+function parseFrac(s){
+  s=s.trim();
+  let m=s.match(/^(\d+)\s+(\d+)\/(\d+)$/);
+  if(m){let n=+m[1]*+m[3]+ +m[2],d=+m[3];return simplify(n,d);}
+  let f=s.match(/^(\d+)\/(\d+)$/);
+  if(f){return simplify(+f[1],+f[2]);}
+  let i=s.match(/^(\d+)$/);
+  if(i){return[+i[1],1];}
+  let dv=parseFloat(s);
+  if(!isNaN(dv)){for(let den=1;den<=1000;den++){let num=Math.round(dv*den);if(Math.abs(num/den-dv)<0.0001)return simplify(num,den);}}
+  return null;
+}
+
+/* ── generators ── */
+function genLevel1(){
+  const t=rnd(1,4);
+  if(t===1){let b=rnd(2,9),c=rnd(1,10),ans=rnd(10,80);
+    return{display:`${BOX()} &minus; ${b}&times;${c} = ${ans}`,hint:`add ${b}×${c} to the right`,answer:String(ans+b*c),solution:`${ans} + ${b}×${c} = ${ans+b*c}`,type:'□ − b×c = a'};}
+  if(t===2){let b=rnd(2,9),ans=rnd(5,20);
+    return{display:`${BOX()} &times; ${b} = ${ans*b}`,hint:`divide ${ans*b} by ${b}`,answer:String(ans),solution:`${ans*b} ÷ ${b} = ${ans}`,type:'□ × b = c'};}
+  if(t===3){let ans=rnd(2,15),b=rnd(2,9);
+    return{display:`${ans+b} &minus; ${BOX()} = ${b}`,hint:`${ans+b} − ${b}`,answer:String(ans),solution:`${ans+b} − ${b} = ${ans}`,type:'a − □ = b'};}
+  let ans=rnd(2,12),b=rnd(2,8);
+  return{display:`${ans*b} &divide; ${BOX()} = ${b}`,hint:`${ans*b} ÷ ${b}`,answer:String(ans),solution:`${ans*b} ÷ ${b} = ${ans}`,type:'a ÷ □ = b'};
+}
+
+function genLevel2(){
+  const t=rnd(1,5);
+  if(t===1){let b=rnd(2,6),c=rnd(1,5),ans=rnd(2,10);let lhs=b*ans+c;
+    return{display:`${BOX()} &times; ${b} + ${c} = ${lhs}`,hint:`subtract ${c}, divide by ${b}`,answer:String(ans),solution:`(${lhs}−${c})÷${b} = ${ans}`,type:'□×b + c = d'};}
+  if(t===2){let b=rnd(2,5),c=rnd(1,4),d=rnd(2,5),ans=rnd(2,9);
+    let inner=b*ans+b*c;let lhs=inner/d;
+    if(!Number.isInteger(lhs)){ans=d*rnd(1,3);inner=b*ans+b*c;lhs=inner/d;}
+    return{display:`(${b}&times;${BOX()} + ${b*c}) &divide; ${d} = ${lhs}`,hint:`×${d}, −${b*c}, ÷${b}`,answer:String(ans),solution:`${lhs}×${d}=${inner}; −${b*c}; ÷${b}=${ans}`,type:'(b×□+k)÷d = n'};}
+  if(t===3){
+    let n1=rnd(1,5),d1=pick([2,3,4,5,6]),n2=rnd(1,4),d2=pick([3,4,5,6]);
+    let[a1,b1]=simplify(n1,d1),[a2,b2]=simplify(n2,d2);
+    let ansN=rnd(1,5),ansD=pick([3,4,5,6]);let[an,ad]=simplify(ansN,ansD);
+    let sumN=a1*b2+a2*b1,sumD=b1*b2;let[sn,sd]=simplify(sumN,sumD);
+    let rhsN=an*sd+sn*ad,rhsD=ad*sd;let[rn,rd]=simplify(rhsN,rhsD);
+    return{display:`${F(a1,b1)} + ${F(a2,b2)} + ${BOX()} = ${F(rn,rd)}`,hint:`subtract ${fstr(sn,sd)} from RHS`,answer:fstr(an,ad),solution:`${fstr(rn,rd)} − ${fstr(sn,sd)} = ${fstr(an,ad)}`,type:'a+b+□=c (fracs)',isStr:true};}
+  if(t===4){let ans=rnd(10,40)*0.5,b=pick([1.5,2.5,0.5,1.2]);let c=rnd(2,8),lhs=Math.round((ans*b+c)*100)/100;
+    return{display:`${BOX()} &times; ${b} + ${c} = ${lhs}`,hint:`subtract ${c}, divide by ${b}`,answer:fmt(ans),solution:`(${lhs}−${c})÷${b} = ${fmt(ans)}`,type:'□×dec + c = d'};}
+  let ans=rnd(2,9),a=rnd(5,20),b=rnd(2,6),c=rnd(1,4);let lhs=a-(ans-c)*b;
+  return{display:`${lhs} = ${a} &minus; ${b}&times;(${BOX()} &minus; ${c})`,hint:`(${a}−${lhs})÷${b}+${c}`,answer:String(ans),solution:`(${a}−${lhs})÷${b}+${c} = ${ans}`,type:'d = a−b×(□−c)'};
+}
+
+function genLevel3(){
+  const t=rnd(1,5);
+  if(t===1){let ans=rnd(2,7),b=rnd(2,5),c=rnd(1,4),d=rnd(2,5),e=rnd(1,3);
+    let outer=(ans+c)*b-d*e;
+    return{display:`(${BOX()} + ${c}) &times; ${b} &minus; ${d}&times;${e} = ${outer}`,hint:`add ${d*e}, ÷${b}, −${c}`,answer:String(ans),solution:`(${outer}+${d*e})÷${b}−${c} = ${ans}`,type:'(□+c)×b − d×e = f'};}
+  if(t===2){let ans=rnd(2,6),a=rnd(3,8);
+    let n1=rnd(1,4),d1=pick([3,5,7]),n2=rnd(1,4),d2=pick([4,6,8]);
+    let[fn1,fd1]=simplify(n1,d1),[fn2,fd2]=simplify(n2,d2);
+    let fpN=fn1*fd2+fn2*fd1,fpD=fd1*fd2;let[fpn,fpd]=simplify(fpN,fpD);
+    let lhsN=ans*a*fpd-fpn,lhsD=fpd;let[ln,ld]=simplify(lhsN,lhsD);
+    return{display:`${BOX()} &times; ${a} &minus; (${F(fn1,fd1)} + ${F(fn2,fd2)}) = ${F(ln,ld)}`,hint:`add fracs, then ÷${a}`,answer:String(ans),solution:`(${fstr(ln,ld)}+${fstr(fpn,fpd)})÷${a} = ${ans}`,type:'□×a − (f+g) = n'};}
+  if(t===3){let ans=rnd(2,10),b=rnd(2,5),a=rnd(3,9);
+    let inner=a-b*ans;if(inner<=0){ans=1;inner=a-b*ans;}let c=rnd(2,4);let outer=c*inner;
+    return{display:`${c} &times; (${a} &minus; ${b}&times;${BOX()}) = ${outer}`,hint:`÷${c}, then (${a}−?)÷${b}`,answer:String(ans),solution:`${outer}÷${c}=${inner}; (${a}−${inner})÷${b}=${ans}`,type:'c×(a − b×□) = d'};}
+  if(t===4){let ans=rnd(2,8),a=rnd(10,30),b=rnd(2,5),c=rnd(2,4),d=rnd(1,3);
+    let lhs=a-(b+c)*ans+d;
+    return{display:`${a} &minus; (${b}+${c}) &times; ${BOX()} + ${d} = ${lhs}`,hint:`(${a}+${d}−${lhs}) ÷ ${b+c}`,answer:String(ans),solution:`(${a}+${d}−${lhs})÷${b+c} = ${ans}`,type:'a−(b+c)×□+d = e'};}
+  let n1=rnd(1,5),d1=pick([2,3,4,5,6]),n2=rnd(1,4),d2=pick([3,4,5,6]);
+  let[a1,b1]=simplify(n1,d1),[a2,b2]=simplify(n2,d2);
+  let ansN=rnd(1,5),ansD=pick([3,4,5]);let[an,ad]=simplify(ansN,ansD);
+  let A=rnd(2,5);
+  let rhsN=an*b1*b2*A+(a1*b2+a2*b1)*ad,rhsD=b1*b2*ad;let[rn,rd]=simplify(rhsN,rhsD);
+  return{display:`(${BOX()} + ${F(a1,b1)}) &times; ${A} + ${F(a2,b2)} &times; ${A} = ${F(rn,rd)}`,hint:`÷${A}, subtract both fractions`,answer:fstr(an,ad),solution:`${fstr(rn,rd)}÷${A}−${fstr(a1,b1)}−${fstr(a2,b2)} = ${fstr(an,ad)}`,type:'(□+f)×A+g×A = n',isStr:true};
+}
+
+function genLevel4(){
+  const fns=[genL4_A,genL4_B,genL4_C,genL4_D,genL4_E,genL4_F,genL4_G];
+  let order=[...Array(7).keys()].sort(()=>Math.random()-0.5);
+  for(let i of order){let q=fns[i]();if(q)return q;}
+  return genLevel3();
+}
+function genL4_A(){
+  const PAIRS=[[16,21,7,8],[3,7,7,9],[5,14,7,10],[4,9,9,16],[3,8,8,15],[5,12,4,5],[7,8,2,7],[2,9,9,10]];
+  for(let i=0;i<80;i++){
+    let ansTenths=rnd(5,30);let ansVal=ansTenths/10;
+    let[fn1,fd1,fn2,fd2]=pick(PAIRS);
+    let[a1,b1]=simplify(fn1,fd1),[a2,b2]=simplify(fn2,fd2);
+    let pn=a1*a2,pd=b1*b2;let[ppn,ppd]=simplify(pn,pd);
+    let rhs=ansVal+ppn/ppd;
+    let rhsHTML,rhsText;
+    if(Math.abs(rhs*10-Math.round(rhs*10))<0.001){rhsHTML=rhs.toFixed(1);rhsText=rhs.toFixed(1);}
+    else if(Math.abs(rhs*100-Math.round(rhs*100))<0.001){rhsHTML=rhs.toFixed(2);rhsText=rhs.toFixed(2);}
+    else{for(let d=1;d<=20;d++){let n=Math.round(rhs*d);if(Math.abs(n/d-rhs)<0.0001){rhsHTML=F(n,d);rhsText=fstr(n,d);break;}}}
+    if(!rhsHTML)continue;
+    let aStr=Number.isInteger(ansVal)?String(ansVal):ansVal.toFixed(1);
+    return{display:`${PBOX()} &minus; ${F(a1,b1)} &times; ${F(a2,b2)} = ${rhsHTML}`,hint:`answer = ${rhsText} + ${fstr(a1,b1)}×${fstr(a2,b2)}`,answer:aStr,solution:`${rhsText} + ${fstr(ppn,ppd)} = ${aStr}`,type:'□ − f×g = decimal'};
+  }
+}
+function genL4_B(){
+  for(let i=0;i<80;i++){
+    let dec=pick([0.1,0.2,0.3,0.4,0.5,0.6,0.8]);let divisor=pick([2,3,4,5]);
+    let ansN=rnd(1,9),ansD=pick([3,4,5,6,8,10,12]);let[san,sad]=simplify(ansN,ansD);
+    let bracketVal=san/sad+dec;let afterDiv=bracketVal/divisor;
+    let fn=rnd(1,6),fd=pick([12,15,18,20,24,30]);let[sfn,sfd]=simplify(fn,fd);
+    let rhsDec=sfn/sfd+afterDiv;if(rhsDec<=0)continue;
+    for(let rd=2;rd<=20;rd++){let rn=Math.round(rhsDec*rd);if(Math.abs(rn/rd-rhsDec)<0.0001&&rn>0){
+      let[rrn,rrd]=simplify(rn,rd);
+      return{display:`${F(sfn,sfd)} + (${PBOX()} + ${dec}) &divide; ${divisor} = ${F(rrn,rrd)}`,hint:`subtract ${fstr(sfn,sfd)}, ×${divisor}, subtract ${dec}`,answer:fstr(san,sad),solution:`(${fstr(rrn,rrd)}−${fstr(sfn,sfd)})×${divisor}−${dec} = ${fstr(san,sad)}`,type:'f+(□+d)÷c = mixed',isStr:true};}}
+  }
+}
+function genL4_C(){
+  for(let i=0;i<80;i++){
+    let intA=pick([6,7,8,9,10]);let mn=rnd(1,6),md=pick([3,4,5,6,7,8,9]);let[smn,smd]=simplify(mn,md);
+    let mulVal=(smd+smn)/smd;let en=rnd(1,5),ed=pick([6,7,8,9,10,12]);let[sen,sed]=simplify(en,ed);
+    let ansN=rnd(1,8),ansD=pick([2,3,4,5,6]);let[san,sad]=simplify(ansN,ansD);
+    let rhsDec=intA-mulVal*(san/sad)+sen/sed;if(rhsDec<=0||rhsDec>=intA)continue;
+    for(let rd=1;rd<=12;rd++){let rn=Math.round(rhsDec*rd);if(Math.abs(rn/rd-rhsDec)<0.0001&&rn>0){
+      let[rrn,rrd]=simplify(rn,rd);
+      return{display:`${intA} &minus; ${F(smd+smn,smd)} &times; ${PBOX()} + ${F(sen,sed)} = ${F(rrn,rrd)}`,hint:`move +${fstr(sen,sed)} to RHS, then ÷${fstr(smd+smn,smd)}`,answer:fstr(san,sad),solution:`(${intA}+${fstr(sen,sed)}−${fstr(rrn,rrd)}) ÷ ${fstr(smd+smn,smd)} = ${fstr(san,sad)}`,type:'A − mixed×□ + f = n',isStr:true};}}
+  }
+}
+function genL4_D(){
+  for(let i=0;i<150;i++){
+    let outerIntA=rnd(2,5);let mn=rnd(1,6),md=pick([4,5,7,8,9,11,22]);let[smn,smd]=simplify(mn,md);
+    let mulVal=(smd+smn)/smd;let decVal=pick([2.25,1.75,3.5,0.75,1.5,2.5,1.25]);
+    let fn=rnd(1,5),fd=pick([6,7,8,9,12,18]);let[sfn,sfd]=simplify(fn,fd);
+    let factor2=decVal-sfn/sfd;if(factor2<=0)continue;
+    let ansN=rnd(1,6),ansD=pick([2,3,4,5,6]);let[san,sad]=simplify(ansN,ansD);
+    let inner=outerIntA-mulVal*(san/sad);if(inner<=0)continue;
+    let rhs=inner*factor2;if(rhs<=0)continue;
+    for(let rd=1;rd<=12;rd++){let rn=Math.round(rhs*rd);if(Math.abs(rn/rd-rhs)<0.0001&&rn>0){
+      let[rrn,rrd]=simplify(rn,rd);let decStr=Number.isInteger(decVal)?String(decVal):decVal.toFixed(2);
+      return{display:`(${outerIntA} &minus; ${PBOX()} &times; ${F(smd+smn,smd)}) &times; (${decStr} &minus; ${F(sfn,sfd)}) = ${F(rrn,rrd)}`,hint:`÷(${decStr}−${fstr(sfn,sfd)}), then (${outerIntA}−?)÷${fstr(smd+smn,smd)}`,answer:fstr(san,sad),solution:`inner÷factor; (${outerIntA}−inner)÷${fstr(smd+smn,smd)} = ${fstr(san,sad)}`,type:'(A−□×m)×(d−f) = n',isStr:true};}}
+  }
+}
+function genL4_E(){
+  for(let i=0;i<100;i++){
+    let intResult=rnd(6,15);let mn=rnd(1,6),md=pick([4,5,6,7,8]);let[smn,smd]=simplify(mn,md);
+    let mulVal=(smd+smn)/smd;let ans=rnd(2,6);
+    let boxContrib=ans*mulVal;let remainder=intResult-boxContrib;if(remainder<=0||remainder>10)continue;
+    let intA=pick([3,4,5,6]);let mn2=rnd(1,5),md2=pick([3,4,5,6,7]);let[smn2,smd2]=simplify(mn2,md2);
+    let firstTerm=intA*(smd2+smn2)/smd2;let secondTerm=firstTerm-remainder;if(secondTerm<=0)continue;
+    let intE=rnd(3,10);let divisorVal=intE/secondTerm;
+    for(let dD=2;dD<=8;dD++){let dN=Math.round(divisorVal*dD);if(dN>dD&&Math.abs(dN/dD-divisorVal)<0.0001){
+      let[sdn,sdd]=simplify(dN,dD);
+      return{display:`(${intA} &times; ${F(smd2+smn2,smd2)} &minus; ${intE} &divide; ${F(sdn,sdd)}) + ${PBOX()} &times; ${F(smd+smn,smd)} = ${intResult}`,hint:`compute bracket first, then (${intResult}−bracket)÷${fstr(smd+smn,smd)}`,answer:String(ans),solution:`bracket=${fstr(Math.round(remainder*100),100)}; ÷${fstr(smd+smn,smd)} = ${ans}`,type:'(A×f−E÷g)+□×h = n'};}}
+  }
+}
+function genL4_F(){
+  for(let i=0;i<100;i++){
+    let dec1=pick([0.8,0.6,1.2,0.4,1.5,0.9]);let dec2=pick([2.4,1.6,3.2,0.6,1.2,1.8]);
+    let intB=rnd(3,8);let mn=rnd(1,5),md=pick([3,4,5,6,8]);let[smn,smd]=simplify(mn,md);
+    let mixedBval=intB+smn/smd;let fn=rnd(1,4),fd=pick([3,4,5,6,8,10]);let[sfn,sfd]=simplify(fn,fd);
+    let intResult=rnd(1,4);let bracket=(intResult-sfn/sfd)*dec2/dec1;
+    let ansVal=mixedBval-bracket;if(ansVal<=0||ansVal>=mixedBval)continue;
+    for(let ad=1;ad<=12;ad++){let an=Math.round(ansVal*ad);if(Math.abs(an/ad-ansVal)<0.0001&&an>0){
+      let[san,sad]=simplify(an,ad);let d1s=Number.isInteger(dec1)?String(dec1):dec1.toFixed(1);let d2s=Number.isInteger(dec2)?String(dec2):dec2.toFixed(1);
+      return{display:`${d1s} &times; (${F(intB*smd+smn,smd)} &minus; ${PBOX()}) &divide; ${d2s} + ${F(sfn,sfd)} = ${intResult}`,hint:`subtract ${fstr(sfn,sfd)}, ×${d2s}÷${d1s}, then ${fstr(intB*smd+smn,smd)}−?`,answer:fstr(san,sad),solution:`(${intResult}−${fstr(sfn,sfd)})×${d2s}÷${d1s}; ${fstr(intB*smd+smn,smd)}−? = ${fstr(san,sad)}`,type:'d×(mixed−□)÷d+f = n',isStr:true};}}
+  }
+}
+function genL4_G(){
+  for(let i=0;i<150;i++){
+    let dec=pick([0.22,0.11,0.33,0.44,0.5,0.25,0.2]);let decRhsFactor=rnd(2,8);
+    let rhs=Math.round(dec*decRhsFactor*100)/100;
+    let fn=rnd(1,5),fd=pick([6,7,8,9,11]);let[sfn,sfd]=simplify(fn,fd);
+    let innerSum=rhs/dec;let aDiv=innerSum-sfn/sfd;if(aDiv<=0||aDiv>8)continue;
+    let A=rnd(2,5);let gap=A/aDiv;if(gap<=0||gap>3)continue;
+    let Bwhole=Math.ceil(gap)+rnd(0,1);let Bn=rnd(1,5),Bd=pick([3,5,6,7,8]);let[sBn,sBd]=simplify(Bn,Bd);
+    let Bval=Bwhole+sBn/sBd;let ansVal=Bval-gap;if(ansVal<=0||ansVal>=Bval)continue;
+    for(let ad=1;ad<=12;ad++){let an=Math.round(ansVal*ad);if(Math.abs(an/ad-ansVal)<0.0001&&an>0){
+      let[san,sad]=simplify(an,ad);let decStr=Number.isInteger(dec)?String(dec):dec.toFixed(2);let rhsStr=Number.isInteger(rhs)?String(rhs):rhs.toFixed(2);
+      return{display:`{${A} &divide; (${F(Bwhole*sBd+sBn,sBd)} &minus; ${PBOX()}) + ${F(sfn,sfd)}} &times; ${decStr} = ${rhsStr}`,hint:`÷${decStr}, −${fstr(sfn,sfd)}, then ${A}÷? = gap`,answer:fstr(san,sad),solution:`inner=${innerSum.toFixed(3)}; gap=${gap.toFixed(3)}; □=${fstr(san,sad)}`,type:'{A÷(m−□)+f}×d = r',isStr:true};}}
+  }
+}
+
+/* ── auto-difficulty ── */
+function recommendDiff(score){
+  if(score>=8&&diff<4)return diff+1;
+  if(score<=4&&diff>1)return diff-1;
+  return diff;
+}
+
+/* ── game state ── */
+function setDiff(d,silent){
+  diff=d;
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i+1===d));
+  document.getElementById('checkBtn').className=d===4?'btn btn-purple':'btn btn-primary';
+  updatePBDisplay();
+  if(!silent)resetGame();
+}
+
+function resetGame(){
+  qIdx=0;nCorrect=0;nWrong=0;results=[];answered=false;streak=0;sessionLog=[];retryQueue=[];sessionStart=Date.now();
+  document.getElementById('sCorrect').textContent='0';
+  document.getElementById('sWrong').textContent='0';
+  document.querySelector('.input-area').style.display='flex';
+  updateStreak();
+  renderPips();loadQ();
+}
+
+function updateStreak(){
+  const el=document.getElementById('streakBadge');
+  document.getElementById('streakNum').textContent=streak;
+  el.classList.toggle('hidden',streak<2);
+}
+
+function renderPips(){
+  const total=TOTAL+retryQueue.length;
+  let h='';
+  for(let i=0;i<TOTAL;i++){
+    let c='pip';
+    if(i<results.length)c+=' '+(results[i]?'ok':'bad');
+    else if(i===qIdx&&retryQueue.length===0)c+=' cur'+(diff===4?' lv4':'');
+    h+=`<div class="${c}"></div>`;
+  }
+  // retry slots
+  for(let i=0;i<retryQueue.length;i++){
+    let c='pip retry';
+    if(i===0&&qIdx>=TOTAL)c+=' cur';
+    h+=`<div class="${c}"></div>`;
+  }
+  document.getElementById('pips').innerHTML=h;
+}
+
+function loadQ(){
+  if(qIdx>=TOTAL&&retryQueue.length===0){showDone();return;}
+  answered=false;
+  let isRetry=false;
+  if(qIdx>=TOTAL&&retryQueue.length>0){
+    currentQ=retryQueue.shift();
+    isRetry=true;
+  } else {
+    currentQ=diff===1?genLevel1():diff===2?genLevel2():diff===3?genLevel3():genLevel4();
+  }
+  const typeHTML=currentQ.type+(diff===4?'<span class="lv4-badge">lv4</span>':'')+(isRetry?'<span class="retry-tag">retry</span>':'');
+  document.getElementById('qtype').innerHTML=typeHTML;
+  document.getElementById('qtext').innerHTML=currentQ.display;
+  document.getElementById('hintText').textContent='';
+  let inp=document.getElementById('ansInput');
+  inp.value='';inp.className='ans-input';inp.disabled=false;
+  document.getElementById('feedback').style.display='none';
+  document.getElementById('solution').style.display='none';
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('qcard').className='qcard';
+  renderPips();startTimer();
+  clearTimeout(hintTimer);
+  hintTimer=setTimeout(()=>{if(!answered)document.getElementById('hintText').textContent='Hint: '+currentQ.hint;},20000);
+  setTimeout(()=>inp.focus(),50);
+}
+
+function startTimer(){
+  clearInterval(timerInterval);
+  timerMax=diff===1?60:diff===2?90:diff===3?120:150;
+  timerSec=timerMax;updateTimer();
+  timerInterval=setInterval(()=>{timerSec--;updateTimer();if(timerSec<=0){clearInterval(timerInterval);timeUp();}},1000);
+}
+function updateTimer(){
+  let frac=timerSec/timerMax,circ=157.08;
+  let col=timerSec>timerMax*0.5?'#4ecb8a':timerSec>timerMax*0.25?'#f5a623':'#f26b5b';
+  let arc=document.getElementById('timerArc');
+  arc.style.stroke=col;arc.setAttribute('stroke-dashoffset',circ*(1-frac));
+  document.getElementById('timerNum').textContent=timerSec;
+}
+
+function timeUp(){
+  if(answered)return;answered=true;
+  const isRetry=(qIdx>=TOTAL);
+  if(!isRetry){results.push(false);qIdx++;}
+  nWrong++;
+  document.getElementById('sWrong').textContent=nWrong;
+  streak=0;updateStreak();
+  playWrong();
+  if(!isRetry) sessionLog.push({type:currentQ.type,correct:false});
+  retryQueue.push(currentQ);
+  showFeedback(false,"Time's up! Answer: "+currentQ.answer);
+  document.getElementById('qcard').classList.add('flash-bad');
+  document.getElementById('solution').style.display='block';
+  document.getElementById('solution').textContent='→ '+currentQ.solution;
+  document.getElementById('nextBtn').style.display='inline-block';
+  document.getElementById('ansInput').disabled=true;
+  renderPips();
+}
+
+function checkAnswer(){
+  if(answered)return;
+  let raw=document.getElementById('ansInput').value.trim();
+  if(!raw)return;
+  clearInterval(timerInterval);clearTimeout(hintTimer);
+  answered=true;
+  const isRetry=(qIdx>=TOTAL);
+  let ok=false;
+  let userFrac=parseFrac(raw);
+  let ansFrac=parseFrac(String(currentQ.answer));
+  if(userFrac&&ansFrac){ok=(userFrac[0]===ansFrac[0]&&userFrac[1]===ansFrac[1]);}
+  if(!ok&&!currentQ.isStr){
+    let uv=parseFloat(raw.replace(/,/g,'')),av=parseFloat(String(currentQ.answer));
+    ok=!isNaN(uv)&&!isNaN(av)&&Math.abs(uv-av)<0.011;
+  }
+  let inp=document.getElementById('ansInput');
+  inp.className='ans-input '+(ok?'correct':'wrong');inp.disabled=true;
+
+  if(!isRetry) sessionLog.push({type:currentQ.type,correct:ok});
+
+  if(ok){
+    if(!isRetry){results.push(true);qIdx++;}
+    nCorrect++;streak++;
+    document.getElementById('sCorrect').textContent=nCorrect;
+    document.getElementById('qcard').classList.add('flash-ok');
+    playCorrect();updateStreak();
+    showFeedback(true,streak>=3?`Correct! +${streak} streak`:'Correct!');
+    renderPips();
+    setTimeout(()=>loadQ(),850);
+  } else {
+    if(!isRetry){results.push(false);qIdx++;}
+    nWrong++;streak=0;updateStreak();
+    document.getElementById('sWrong').textContent=nWrong;
+    document.getElementById('qcard').classList.add('flash-bad');
+    playWrong();
+    showFeedback(false,'Answer: '+currentQ.answer);
+    document.getElementById('solution').style.display='block';
+    document.getElementById('solution').textContent='→ '+currentQ.solution;
+    document.getElementById('nextBtn').style.display='inline-block';
+    retryQueue.push(currentQ);
+    renderPips();
+  }
+}
+
+function showFeedback(ok,msg){
+  let fb=document.getElementById('feedback');
+  fb.style.display='block';fb.className='feedback '+(ok?'ok':'bad');fb.textContent=msg;
+}
+
+function advanceQ(){loadQ();}
+
+function showToast(msg,duration){
+  if(!duration)duration=2500;
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},duration);
+}
+
+function showDone(){
+  clearInterval(timerInterval);
+  const elapsed=Math.round((Date.now()-sessionStart)/1000);
+  recordSession(nCorrect,sessionLog,elapsed);
+
+  // auto-difficulty suggestion
+  const rec=recommendDiff(nCorrect);
+  const diffNames=['','Level 1','Level 2','Level 3','Level 4'];
+  let autoMsg='';
+  if(rec!==diff){
+    autoMsg=`<div style="font-size:13px;color:var(--amber);margin-bottom:1rem">Try ${diffNames[rec]} next?</div>`;
+  }
+
+  // session type breakdown
+  const typeMap={};
+  sessionLog.forEach(({type,correct})=>{
+    if(!typeMap[type])typeMap[type]={ok:0,total:0};
+    typeMap[type].total++;if(correct)typeMap[type].ok++;
+  });
+  let histHTML='<div class="history-wrap"><div class="history-title">this session by type</div><table class="history-table"><tr><th>type</th><th>result</th></tr>';
+  Object.entries(typeMap).forEach(([type,{ok,total}])=>{
+    const pct=Math.round(ok/total*100);
+    const col=pct>=80?'#4ecb8a':pct>=50?'#f5a623':'#f26b5b';
+    histHTML+=`<tr><td>${type}</td><td><span style="color:${col};font-weight:500">${ok}/${total}</span><span class="pct-bar" style="width:${pct*0.5}px;background:${col}"></span></td></tr>`;
+  });
+  histHTML+='</table></div>';
+
+  const pb=stats.pbs[diff-1];
+  const isPB=(pb!==null&&elapsed===pb); // true if this run IS the new PB
+  const msg=nCorrect>=9?'Outstanding — exam ready!':nCorrect>=7?'Excellent work!':nCorrect>=5?'Good effort, keep drilling!':'Keep practising!';
+  const btnCls=diff===4?'btn btn-purple':'btn btn-primary';
+  const scoreCls=diff===4?'done-score lv4':'done-score';
+  const pbLine=isPB?'<div style="font-size:13px;color:var(--amber);margin-top:4px">new best time!</div>':'';
+
+  document.getElementById('qcard').innerHTML=`
+    <div class="done-screen">
+      <div class="${scoreCls}">${fmtTime(elapsed)}</div>
+      <div style="font-size:14px;color:var(--muted);margin-top:2px;font-family:DM Mono,monospace">${nWrong} mistake${nWrong===1?'':'s'}</div>
+      ${pbLine}
+      <div class="done-msg" style="margin-top:12px">${msg}</div>
+      ${autoMsg}
+      <div class="done-actions">
+        <button class="${btnCls}" onclick="resetGame()">try again</button>
+        ${rec!==diff?`<button class="btn" onclick="setDiff(${rec})">→ ${diffNames[rec]}</button>`:''}
+        <button class="btn" onclick="openPanel()">history</button>
+      </div>
+      ${histHTML}
+    </div>`;
+  document.querySelector('.input-area').style.display='none';
+
+  if(isPB&&nCorrect>0)setTimeout(()=>showToast('New best time: '+fmtTime(elapsed)),400);
+}
+
+/* ── stats panel ── */
+function openPanel(){renderPanel();document.getElementById('panelOverlay').classList.add('open');}
+function closePanel(){document.getElementById('panelOverlay').classList.remove('open');}
+
+function renderPanel(){
+  for(let i=1;i<=4;i++){
+    const v=stats.pbs[i-1];
+    document.getElementById('panelPB'+i).textContent=v!==null?fmtTime(v):'—';
+  }
+  renderProgressChart();
+  // type accuracy
+  const typeEl=document.getElementById('typeStats');
+  const entries=Object.entries(stats.types).sort((a,b)=>a[1].ok/a[1].total-b[1].ok/b[1].total);
+  if(entries.length===0){typeEl.innerHTML='<div style="font-size:13px;color:var(--hint);padding:8px 0">no data yet — complete a session first</div>';}
+  else {
+    typeEl.innerHTML=entries.map(([type,{ok,total}])=>{
+      const pct=Math.round(ok/total*100);
+      const col=pct>=80?'#4ecb8a':pct>=50?'#f5a623':'#f26b5b';
+      return `<div class="type-row">
+        <div class="type-name">${type}</div>
+        <div class="type-bar-wrap"><div class="type-bar" style="width:${pct}%;background:${col}"></div></div>
+        <div class="type-pct" style="color:${col}">${pct}%</div>
+        <div class="type-count">${ok}/${total}</div>
+      </div>`;
+    }).join('');
+  }
+  // session list
+  const sessEl=document.getElementById('sessionList');
+  if(stats.sessions.length===0){sessEl.innerHTML='<div style="font-size:13px;color:var(--hint);padding:8px 0">no sessions yet</div>';return;}
+  sessEl.innerHTML=stats.sessions.slice(0,10).map(s=>{
+    const col=s.mistakes===0?'#4ecb8a':s.mistakes<=2?'#f5a623':'#f26b5b';
+    const timeStr=s.elapsed!==undefined?fmtTime(s.elapsed):'?';
+    return `<div class="type-row">
+      <div class="type-name">${s.date} · Lv${s.diff}</div>
+      <div style="font-size:13px;font-weight:500;color:var(--text);font-family:DM Mono,monospace">${timeStr}</div>
+      <div style="font-size:11px;color:${col};min-width:40px;text-align:right">${s.mistakes} err</div>
+    </div>`;
+  }).join('');
+}
+
+function renderProgressChart(){
+  const el=document.getElementById('progressChart');
+  const sessions=stats.sessions.filter(s=>s.elapsed!==undefined);
+  if(sessions.length<2){
+    el.innerHTML='<div style="font-size:12px;color:var(--hint);padding:6px 0">complete 2+ sessions to see a chart</div>';
+    return;
+  }
+
+  // Build per-level series (chronological = reversed since sessions[0] is newest)
+  const LEVEL_COLORS=['#5b8ff9','#4ecb8a','#f5a623','#a78bfa'];
+  const LEVEL_NAMES=['Lv1','Lv2','Lv3','Lv4'];
+  const series=[1,2,3,4].map(lv=>{
+    const pts=[...sessions].reverse().filter(s=>s.diff===lv);
+    return pts;
+  }).filter(pts=>pts.length>=1);
+
+  if(series.length===0){el.innerHTML='';return;}
+
+  // Chart dimensions
+  const W=420,H=120,PAD_L=46,PAD_R=10,PAD_T=10,PAD_B=24;
+  const cW=W-PAD_L-PAD_R,cH=H-PAD_T-PAD_B;
+
+  // Find global min/max elapsed across all series
+  const allTimes=sessions.map(s=>s.elapsed);
+  const minT=Math.min(...allTimes),maxT=Math.max(...allTimes);
+  const range=maxT-minT||60; // avoid div/0 if all same
+
+  // X axis: use index within each series (progress = getting faster over time)
+  // We'll chart each level as its own line
+  // For x axis, use a common timeline: session date order per level
+  function toX(idx,total){return PAD_L+(total===1?cW/2:idx/(total-1)*cW);}
+  function toY(t){return PAD_T+cH-(t-minT)/range*cH;}
+
+  // Y axis tick values
+  const yTicks=[];
+  const step=range<=120?30:range<=300?60:120;
+  const firstTick=Math.ceil(minT/step)*step;
+  for(let t=firstTick;t<=maxT+1;t+=step)yTicks.push(t);
+
+  let svg=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;overflow:visible">`;
+
+  // Grid lines + y labels
+  yTicks.forEach(t=>{
+    const y=toY(t);
+    if(y<PAD_T||y>PAD_T+cH+2)return;
+    svg+=`<line x1="${PAD_L}" y1="${y}" x2="${PAD_L+cW}" y2="${y}" stroke="#222228" stroke-width="1"/>`;
+    svg+=`<text x="${PAD_L-6}" y="${y+4}" text-anchor="end" font-size="10" fill="#555562" font-family="DM Mono,monospace">${fmtTime(t)}</text>`;
+  });
+
+  // X axis baseline
+  svg+=`<line x1="${PAD_L}" y1="${PAD_T+cH}" x2="${PAD_L+cW}" y2="${PAD_T+cH}" stroke="#333340" stroke-width="1"/>`;
+
+  // Plot each level series
+  [1,2,3,4].forEach((lv,li)=>{
+    const pts=[...sessions].reverse().filter(s=>s.diff===lv);
+    if(pts.length===0)return;
+    const col=LEVEL_COLORS[li];
+
+    if(pts.length===1){
+      const x=toX(0,1),y=toY(pts[0].elapsed);
+      svg+=`<circle cx="${x}" cy="${y}" r="3.5" fill="${col}" opacity="0.9"/>`;
+      return;
+    }
+
+    // Line path
+    const path=pts.map((p,i)=>{
+      const x=toX(i,pts.length),y=toY(p.elapsed);
+      return (i===0?'M':'L')+x.toFixed(1)+','+y.toFixed(1);
+    }).join(' ');
+    svg+=`<path d="${path}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>`;
+
+    // Dots
+    pts.forEach((p,i)=>{
+      const x=toX(i,pts.length),y=toY(p.elapsed);
+      const errCol=p.mistakes===0?col:(p.mistakes<=2?'#f5a623':'#f26b5b');
+      svg+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="${errCol}" stroke="${col}" stroke-width="1.5"/>`;
+    });
+  });
+
+  // Legend
+  let lx=PAD_L;
+  [1,2,3,4].forEach((lv,li)=>{
+    const pts=sessions.filter(s=>s.diff===lv);
+    if(pts.length===0)return;
+    const col=LEVEL_COLORS[li];
+    svg+=`<rect x="${lx}" y="${H-10}" width="10" height="4" rx="2" fill="${col}"/>`;
+    svg+=`<text x="${lx+14}" y="${H-6}" font-size="10" fill="#8a8a96" font-family="DM Mono,monospace">${LEVEL_NAMES[li]}</text>`;
+    lx+=44;
+  });
+
+  svg+='</svg>';
+  el.innerHTML=svg;
+}
+
+/* ── init ── */
+function init(){
+  loadStats();
+  updatePBDisplay();
+  setDiff(1,true);
+  resetGame();
+}
+init();
+</script>
+</body>
+</html>
