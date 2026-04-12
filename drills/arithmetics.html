@@ -435,7 +435,7 @@ function genLevel3(){
   let[a1,b1]=simplify(n1,d1),[a2,b2]=simplify(n2,d2);
   let ansN=rnd(1,5),ansD=pick([3,4,5]);let[an,ad]=simplify(ansN,ansD);
   let A=rnd(2,5);
-  let rhsN=an*b1*b2*A+(a1*b2+a2*b1)*ad,rhsD=b1*b2*ad;let[rn,rd]=simplify(rhsN,rhsD);
+  let rhsN=an*b1*b2*A+(a1*b2+a2*b1)*ad*A,rhsD=b1*b2*ad;let[rn,rd]=simplify(rhsN,rhsD);
   return{display:`(${BOX()} + ${F(a1,b1)}) &times; ${A} + ${F(a2,b2)} &times; ${A} = ${F(rn,rd)}`,hint:`÷${A}, subtract both fractions`,answer:fstr(an,ad),solution:`${fstr(rn,rd)}÷${A}−${fstr(a1,b1)}−${fstr(a2,b2)} = ${fstr(an,ad)}`,type:'(□+f)×A+g×A = n',isStr:true};
 }
 
@@ -452,7 +452,7 @@ function genL4_A(){
     let[fn1,fd1,fn2,fd2]=pick(PAIRS);
     let[a1,b1]=simplify(fn1,fd1),[a2,b2]=simplify(fn2,fd2);
     let pn=a1*a2,pd=b1*b2;let[ppn,ppd]=simplify(pn,pd);
-    let rhs=ansVal+ppn/ppd;
+    let rhs=ansVal-ppn/ppd;
     let rhsHTML,rhsText;
     if(Math.abs(rhs*10-Math.round(rhs*10))<0.001){rhsHTML=rhs.toFixed(1);rhsText=rhs.toFixed(1);}
     else if(Math.abs(rhs*100-Math.round(rhs*100))<0.001){rhsHTML=rhs.toFixed(2);rhsText=rhs.toFixed(2);}
