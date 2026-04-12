@@ -15,3 +15,5 @@ dist/
 .vscode/*
 !.vscode/launch.json
 !.vscode/tasks.json
+adam.log
+ilya.log

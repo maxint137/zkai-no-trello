@@ -36,15 +36,15 @@ const dryRun = false; // try before you buy, set to false to actually create car
 
 // month is 0-indexed
 // specify the first Sunday of the cycle
-const kickOffDate = new Date(2026, 3 - 1, 15);
+const kickOffDate = new Date(2026, 4 - 1, 12);
 
 //depending on the cycle number of the semester
-const startingClassNumber = 6;
+const startingClassNumber = 7;
 
+// number of weeks, without the wrap-up week
 // sometimes the cycle is not the 4+1 weeks, but only 3+1
-const workingWeeksThisMonth6thGrade = 3;
-const workingWeeksThisMonth = 4;
-
+const workingWeeksThisMonth6thGrade = 2;
+const workingWeeksThisMonth = 2;
 
 const buildWeeklyTasks = (
   emoji: string,
