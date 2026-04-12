@@ -65,8 +65,8 @@ const buildWeeklyTasks = (
   }));
 
 const make_weekly_tasks_math_4th_grade = (emoji: string): WeeklyTaskList[] =>
-  Array(workingWeeksThisMonth)
-    .fill(buildWeeklyTasks(emoji, "Math", [
+  Array(workingWeeksThisMonth).fill(
+    buildWeeklyTasks(emoji, "Math", [
       { jp: "第回", label: "Class", hours: 2, single_step: true },
       { jp: "🔶基本問題", label: "Class", hours: 1 },
       { jp: "🔷練習問題", label: "Class", hours: 1.5 },
@@ -75,7 +75,8 @@ const make_weekly_tasks_math_4th_grade = (emoji: string): WeeklyTaskList[] =>
       { jp: "反復問題(練習)", label: "Ex", hours: 2 },
       { jp: "トレーニング", label: "Ex", hours: 1.5 },
       { jp: "実戦演習", label: "Ex", hours: 1.5 },
-    ]));
+    ]),
+  );
 
 const _n_days_drill = (title: string, days: number) =>
   Array(days).fill({
@@ -86,18 +87,21 @@ const _n_days_drill = (title: string, days: number) =>
   });
 
 const make_weekly_drills = (_userName: "Ilya" | "Adam"): WeeklyTaskList[] =>
-  Array(workingWeeksThisMonth)
-    .fill([
-      ...buildWeeklyTasks("⚙️", "🧮", _n_days_drill("Arith", 5)),
-      ...buildWeeklyTasks("🛠️", "🈚️", _n_days_drill("Jap", 5)),
-      ...buildWeeklyTasks("🔩", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", _n_days_drill("Eng", 3)),
-    ]);
-
+  Array(workingWeeksThisMonth).fill([
+    ...buildWeeklyTasks("⚙️", "🧮", _n_days_drill("Arith", 5)),
+    ...buildWeeklyTasks("🛠️", "🈚️", _n_days_drill("Jap", 5)),
+    ...buildWeeklyTasks("🔩", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", _n_days_drill("Eng", 3)),
+  ]);
 
 const make_weekly_tasks_math_6th_grade = (emoji: string): WeeklyTaskList[] =>
-  Array(workingWeeksThisMonth6thGrade)
-    .fill(buildWeeklyTasks(emoji, "Math", [
-      { jp: "🔹重要問題チェック", label: "Class", hours: 3.5, single_step: true },
+  Array(workingWeeksThisMonth6thGrade).fill(
+    buildWeeklyTasks(emoji, "Math", [
+      {
+        jp: "🔹重要問題チェック",
+        label: "Class",
+        hours: 3.5,
+        single_step: true,
+      },
       { jp: "🅿️重要問題プラス", label: "Class", hours: 1 },
       { jp: "🔶発展学習", label: "Class", hours: 1 },
       { jp: "🔷ステップアップ演習", label: "Class", hours: 2 },
@@ -105,29 +109,32 @@ const make_weekly_tasks_math_6th_grade = (emoji: string): WeeklyTaskList[] =>
       { jp: "ステップ🏃‍♂️", label: "Ex", hours: 1.5 },
       { jp: "ステップ🙇‍♂️", label: "Ex", hours: 1 },
       { jp: "ステップ🧗‍♂️", label: "Ex", hours: 1 },
-    ]));
+    ]),
+  );
 
 const make_weekly_tasks_science_6th_grade = (emoji: string): WeeklyTaskList[] =>
-  Array(workingWeeksThisMonth6thGrade)
-    .fill(buildWeeklyTasks(emoji, "Sci", [
+  Array(workingWeeksThisMonth6thGrade).fill(
+    buildWeeklyTasks(emoji, "Sci", [
       { jp: "第回", label: "Class", hours: 2, single_step: true },
       { jp: "要点チェック", label: "Class", hours: 1 },
       //
       { jp: "基本問題", label: "Ex", hours: 1 },
       { jp: "練習問題", label: "Ex", hours: 2 },
       { jp: "発展問題", label: "Ex", hours: 2 },
-    ]));
+    ]),
+  );
 
 const make_weekly_tasks_social_6th_grade = (emoji: string): WeeklyTaskList[] =>
-  Array(workingWeeksThisMonth6thGrade)
-    .fill(buildWeeklyTasks(emoji, "Soc", [
+  Array(workingWeeksThisMonth6thGrade).fill(
+    buildWeeklyTasks(emoji, "Soc", [
       { jp: "第回", label: "Class", hours: 2, single_step: true },
       { jp: "要点チェック", label: "Class", hours: 1 },
       //
       { jp: "まとめてみよう", label: "Ex", hours: 1.5 },
       { jp: "練習問題", label: "Ex", hours: 2 },
       { jp: "発展問題", label: "Ex", hours: 2 },
-    ]));
+    ]),
+  );
 
 const make_summary_tasks_math = (emoji: string): WeeklyTaskList =>
   buildWeeklyTasks(emoji, "Math", [
@@ -140,14 +147,15 @@ const make_summary_tasks_math = (emoji: string): WeeklyTaskList =>
   ]);
 
 const make_weekly_tasks_jap = (emoji: string): WeeklyTaskList[] =>
-  Array(workingWeeksThisMonth)
-    .fill(buildWeeklyTasks(emoji, "Jap", [
+  Array(workingWeeksThisMonth).fill(
+    buildWeeklyTasks(emoji, "Jap", [
       { jp: "第回", label: "Class", hours: 1, single_step: true },
       { jp: "基本問題", label: "Class", hours: 2 },
       { jp: "発展問題", label: "Class", hours: 2 },
       //
       { jp: "演習問題", label: "Ex", hours: 2 },
-    ]));
+    ]),
+  );
 
 const make_summary_tasks_jap = (emoji: string): WeeklyTaskList =>
   buildWeeklyTasks(emoji, "Jap", [
@@ -170,8 +178,9 @@ const make_weekly_tasks_4th_grade = (
   emoji: string,
   subject: string,
 ): WeeklyTaskList[] =>
-  Array(workingWeeksThisMonth)
-    .fill(buildWeeklyTasks(emoji, subject, WEEKLY_TEMPLATE_GRADE4));
+  Array(workingWeeksThisMonth).fill(
+    buildWeeklyTasks(emoji, subject, WEEKLY_TEMPLATE_GRADE4),
+  );
 
 // these are somehow are common across the subjects and grades
 const make_summary_tasks = (emoji: string, subject: string): WeeklyTaskList =>
